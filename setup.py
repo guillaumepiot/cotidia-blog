@@ -3,7 +3,7 @@ from distutils.core import setup
 from setuptools import find_packages
 
 
-VERSION = __import__("blogbase").VERSION
+VERSION = __import__("blog").VERSION
 
 CLASSIFIERS = [
     'Framework :: Django',
@@ -24,7 +24,7 @@ root_dir = os.path.dirname(__file__)
 if root_dir:
     os.chdir(root_dir)
 
-for dirpath, dirnames, filenames in os.walk('blogbase'):
+for dirpath, dirnames, filenames in os.walk('blog'):
     # Ignore dirnames that start with '.'
     for i, dirname in enumerate(dirnames):
         if dirname.startswith('.'): del dirnames[i]
@@ -40,16 +40,16 @@ for dirpath, dirnames, filenames in os.walk('blogbase'):
 
 
 setup(
-    name="cotidia-blog-base",
+    name="cotidia-blog",
     description="Blog extension for Cotidia CMSBase",
     version=VERSION,
     author="Guillaume Piot",
     author_email="guillaume@cotidia.com",
-    url="https://bitbucket.org/guillaumepiot/cotidia-blog-base",
-    download_url="https://bitbucket.org/guillaumepiot/cotidia-blog-base/downloads/cotidia-blog-base-%s.tar.gz" % VERSION,
-    package_dir={'blogbase': 'blogbase'},
+    url="https://bitbucket.org/guillaumepiot/cotidia-blog",
+    download_url="https://bitbucket.org/guillaumepiot/cotidia-blog-base/downloads/cotidia-blog-%s.tar.gz" % VERSION,
+    package_dir={'blog': 'blog'},
     packages=packages,
-    package_data={'blogbase': data_files},
+    package_data={'blog': data_files},
     include_package_data=True,
     install_requires=install_requires,
     classifiers=CLASSIFIERS,

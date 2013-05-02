@@ -9,7 +9,7 @@ from redactor.widgets import RedactorEditor
 
 from cmsbase.admin import PageAdmin, PageFormAdmin
 
-from blogbase.models import Article, ArticleTranslation
+from blog.models import Article, ArticleTranslation
 
 
 # Translation
