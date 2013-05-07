@@ -1,0 +1,8 @@
+{% load i18n %}
+{% if articles %}
+{% for article in articles %}
+	<li><a href="{{article.get_absolute_url}}">{{article.translated.title}}</a></li>
+{% endfor %}
+{% else %}
+<p>{% trans "No articles could be found." %}</p>
+{% endif %}

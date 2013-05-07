@@ -1,4 +1,5 @@
-{% extends 'cms/page_meta.html' %}
+{% extends 'blog/article_meta.html' %}{% load blog_tags %}
+{% block navigation %}{% blog_nav %}{% endblock navigation %}
 {% block main %}
 	<h1>{{page.translated.title}}</h1>
 	{{page.translated.content|safe}}
