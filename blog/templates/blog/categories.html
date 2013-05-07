@@ -1,0 +1,10 @@
+{% extends 'blog/article_meta.html' %}{% load i18n blog_tags %}
+{% block navigation %}{% blog_nav %}{% endblock navigation %}
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+  <li><a href="{% url 'blog:categories' %}">{% trans "Categories" %}</a>
+</ul>
+{% endblock %}
+{% block main %}
+	{% blog_categories %}
+{% endblock main %}

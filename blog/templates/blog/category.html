@@ -1,0 +1,18 @@
+{% extends 'blog/article_meta.html' %}{% load i18n blog_tags %}
+{% block navigation %}{% blog_nav %}{% endblock navigation %}
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+  <li><a href="{% url 'blog:categories' %}">{% trans "Categories" %}</a> <span class="divider">/</span></li>
+  <li class="active">{{category.translated.title}}</li>
+</ul>
+{% endblock %}
+{% block main %}
+	<h1>{{category.translated.title}}</h1>
+	{% for article in articles %}
+		<div class="article-list-item">
+			<h2><a href="{{article.get_absolute_url}}">{{article.translated.title}}</a></h2>
+			<p>{{article.translated.content|striptags|truncatewords:50|safe}}</p>
+			<p>{{article.publish_date|date:'d F Y'}}</p>
+		</div>
+	{% endfor %}
+{% endblock main %}

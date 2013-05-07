@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.conf import settings
+from django.core.urlresolvers import reverse
 
 from mptt.models import MPTTModel, TreeForeignKey, TreeManyToManyField
 from multilingual_model.models import MultilingualModel, MultilingualTranslation
@@ -126,3 +127,6 @@ class Category(MPTTModel, MultilingualModel):
 			return translation
 		except:
 			return self.CMSMeta.translation_class.objects.get(language_code=settings.LANGUAGE_CODE, parent=self)
+
+	def get_absolute_url(self):
+		return reverse('blog:category', kwargs={'slug':self.translated().slug})
