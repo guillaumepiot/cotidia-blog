@@ -3,6 +3,6 @@
 {% block main %}
 	<h1>{{page.translated.title}}</h1>
 	{{page.translated.content|safe}}
-	<p class="categories">{% trans "Categories" %}: {% for category in page.categories.all %}<a href="{{category.get_absolute_url}}">{{category.translated.title}}</a>{% if not forloop.last %},{% endif %} {% endfor %}</p>
+	{% if page.categories.all %}<p class="categories">{% trans "Categories" %}: {% for category in page.categories.all %}<a href="{{category.get_absolute_url}}">{{category.translated.title}}</a>{% if not forloop.last %},{% endif %} {% endfor %}</p>{% endif %}
 	
 {% endblock main %}
