@@ -53,7 +53,7 @@ class ArticleManager(models.Manager):
 class Article(BasePage):
 	# Extra fields
 	publish_date = models.DateTimeField()
-	categories = TreeManyToManyField('Category')
+	categories = TreeManyToManyField('Category', blank=True)
 	# Manager
 	objects = ArticleManager()
 

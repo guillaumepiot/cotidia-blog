@@ -42,7 +42,7 @@ class ArticleTranslationInline(TranslationInline):
 # Article
 
 class ArticleAdminForm(PageFormAdmin):
-	categories = forms.ModelMultipleChoiceField(queryset=Category.objects.filter(), widget=forms.CheckboxSelectMultiple)
+	categories = forms.ModelMultipleChoiceField(queryset=Category.objects.filter(), widget=forms.CheckboxSelectMultiple, required=False)
 	class Meta:
 		model = Article
 
@@ -66,6 +66,12 @@ class ArticleAdmin(reversion.VersionAdmin, PublishingWorkflowAdmin):
 			'fields': ('template', 'publish_date', 'slug', 'categories')
 		}),
 	)
+
+	class Media:
+		css = {
+			"all": ("admin/css/page.css",)
+		}
+		js = ("admin/js/page.js",)
 
 admin.site.register(Article, ArticleAdmin)
 

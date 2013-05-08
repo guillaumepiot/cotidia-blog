@@ -1,7 +1,8 @@
-{% extends 'blog/article_meta.html' %}{% load blog_tags %}
+{% extends 'blog/article_meta.html' %}{% load i18n blog_tags %}
 {% block navigation %}{% blog_nav %}{% endblock navigation %}
 {% block main %}
 	<h1>{{page.translated.title}}</h1>
 	{{page.translated.content|safe}}
+	<p class="categories">{% trans "Categories" %}: {% for category in page.categories.all %}<a href="{{category.get_absolute_url}}">{{category.translated.title}}</a>{% if not forloop.last %},{% endif %} {% endfor %}</p>
 	
 {% endblock main %}
