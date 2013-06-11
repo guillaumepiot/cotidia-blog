@@ -1,0 +1,12 @@
+{% load i18n %}
+<ul class="archive years">
+{% for year in archive %}
+	<li>{{year}}
+		<ul class="months">
+		{% for month in year.1 %}
+			<li>{{month}}</li>
+		{% endfor %}
+		</ul>
+	</li>
+{% endfor %}
+</ul>

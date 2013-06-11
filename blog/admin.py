@@ -114,6 +114,12 @@ class CategoryAdmin(MPTTModelAdmin):
 	languages.allow_tags = True
 	languages.short_description = 'Translations'
 
+	# Override the list display from PublishingWorkflowAdmin
+	def get_list_display(self, request, obj=None):
+		if not settings.PREFIX_DEFAULT_LOCALE:
+			return ["title", "identifier", "published", 'order_id']
+		else:
+			return ["title", "identifier", "published", 'order_id', 'languages']
 
 	fieldsets = (
 
