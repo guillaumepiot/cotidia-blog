@@ -2,6 +2,8 @@ from django import template
 register = template.Library()
 
 from blog.models import Article, Category
+from blog.utils import Year, Month
+from blog import settings as blog_settings
 
 @register.inclusion_tag('blog/includes/_nav.html')
 def blog_nav():
@@ -27,16 +29,11 @@ def blog_archive():
 		# How many years?
 		year_range = latest_year - earliest_year
 
-		# Create a month list
-		month_list = []
-		for i in range(12):
-			month_list.append(i+1)
-
 		# Create year list
+		year_list = []
 		for i in range(year_range+1):
-			#years.append(earliest_year + i)
-			archive[earliest_year + i] = month_list
+			year_list.append(Year(latest_year - i))
 
-		print archive
+	return {'archive':year_list, 'show_empty':blog_settings.ARCHIVE_SHOW_EMPTY, 'show_count':blog_settings.ARCHIVE_SHOW_COUNT}
 
-	return {'archive':archive}
+

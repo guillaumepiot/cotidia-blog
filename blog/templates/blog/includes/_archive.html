@@ -1,12 +1,23 @@
 {% load i18n %}
-<ul class="archive years">
+<ul class="archive years nav nav-list">
 {% for year in archive %}
-	<li>{{year}}
+	{% if show_empty or year.article_count > 0 %}
+	<li><a href="{% url 'blog:archive_year' year %}">{{year}}{% if show_count %} ({{year.article_count}}){% endif %}</a>
 		<ul class="months">
-		{% for month in year.1 %}
-			<li>{{month}}</li>
+		{% for month in year.months %}
+			{% with month.articles as articles %}
+				{% if show_empty or articles %}
+				<li><a href="{% url 'blog:archive_month' year month.month_number %}">{{month}}{% if show_count %} ({{month.article_count}}){% endif %}</a>
+					{% if articles %}<ul>
+						{% for article in articles %}
+							<li><a href="{{article.get_absolute_url}}">{{article}}</a></li>
+						{% endfor %}
+					</ul>{% endif %}
+				</li>{% endif %}
+			{% endwith %}
 		{% endfor %}
 		</ul>
 	</li>
+	{% endif %}
 {% endfor %}
 </ul>

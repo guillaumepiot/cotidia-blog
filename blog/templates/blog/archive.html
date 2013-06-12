@@ -1,0 +1,25 @@
+{% extends 'blog/article_meta.html' %}{% load i18n blog_tags %}
+{% block navigation %}{% blog_nav %}{% endblock navigation %}
+
+{% block main %}
+	
+	
+<div class="row-fluid">
+	<div class="span9">
+		<h1>{% trans "Archive" %} / {% if month %}{{month}}{% endif %} {{year}}</h1>
+		{% for article in articles %}
+			<div class="article-list-item">
+				<h2><a href="{{article.get_absolute_url}}">{{article.translated.title}}</a></h2>
+				<p>{{article.translated.content|striptags|truncatewords:50|safe}}</p>
+				<p>{{article.publish_date|date:'d F Y'}}</p>
+			</div>
+		{% endfor %}
+	</div>
+	<div class="span3">
+		<p>{% trans "Archive" %}</p>
+		{% blog_archive %}
+	</div>
+	
+</div>
+
+{% endblock main %}
