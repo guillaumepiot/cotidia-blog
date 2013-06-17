@@ -3,17 +3,25 @@
 {% block main %}
 <div class="row-fluid">
 	<div class="span9">
-		<h1>{{page.translated.title}}</h1>
-		{{page.translated.content|safe}}
-		<p class="categories">{% trans "Categories" %}: {% for category in page.categories.all %}<a href="{{category.get_absolute_url}}">{{category.translated.title}}</a>{% if not forloop.last %},{% endif %} {% endfor %}</p>
+		
+		<ul class="breadcrumb">
+			<li><a href="{% url 'blog:latest' %}">{% trans "Blog" %}</a> <span class="divider">/</span></li>
+			<li>{{article.translated.title}}</li>
+		</ul>
+		
+		<h1>{{article.translated.title}}</h1>
+		{{article.translated.content|safe}}
+		<p class="categories">{% trans "Categories" %}: {% for category in article.categories.all %}<a href="{{category.get_absolute_url}}">{{category.translated.title}}</a>{% if not forloop.last %},{% endif %} {% endfor %}</p>
+		
 	</div>
 	<div class="span3">
+		
 		<p>{% trans "Categories" %}</p>
 		{% blog_categories %}
 		
 		<p>{% trans "Archive" %}</p>
 		{% blog_archive %}
+		
 	</div>
-	
 </div>
 {% endblock main %}

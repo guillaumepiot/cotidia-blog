@@ -3,7 +3,7 @@ from django.conf.urls import patterns, include, url
 urlpatterns = patterns('blog',
 
 	# Default
-	url(r'^$', 'views.article', name="latest"),
+	url(r'^$', 'views.latest', name="latest"),
 	#url(r'^search/$', 'views.search', name="search"),
 
 	# Categories

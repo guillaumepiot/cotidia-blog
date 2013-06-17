@@ -1,5 +1,5 @@
 from django.utils.translation import ugettext as _
-
+from django.core.urlresolvers import reverse
 from blog.models import Article
 
 
@@ -34,6 +34,9 @@ class Year(object):
 	def article_count(self):
 		return Article.objects.get_published_live().filter(publish_date__year=self.year).count()
 
+	def get_absolute_url(self):
+		return reverse('blog:archive_year', kwargs={'year':self.year})
+
 	def __unicode__(self):
 		return u'%s' % self.year
 
@@ -51,11 +54,14 @@ class Month(object):
 	def article_count(self):
 		return self.articles().count()
 
-	def __unicode__(self):
-		return self.month_name()
-
 	def month_number(self):
 		return u'%s' % self.month
 
 	def month_name(self):
 		return u'%s' % self.month_names[self.month-1]
+
+	def get_absolute_url(self):
+		return reverse('blog:archive_month', kwargs={'year':self.year, 'month':self.month_number()})
+
+	def __unicode__(self):
+		return self.month_name()

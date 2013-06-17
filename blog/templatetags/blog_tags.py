@@ -15,10 +15,11 @@ def blog_categories():
     categories = Category.objects.filter(published=True)
     return {'categories': categories}
 
-@register.inclusion_tag('blog/includes/_archive.html')
-def blog_archive():
+@register.inclusion_tag('blog/includes/_archive.html', takes_context=True)
+def blog_archive(context, show_empty=blog_settings.ARCHIVE_SHOW_EMPTY, show_articles=blog_settings.ARCHIVE_SHOW_ARTICLES, show_count=blog_settings.ARCHIVE_SHOW_COUNT):
 	archive = {}
 	articles = Article.objects.get_published_live().order_by('-publish_date')
+	request = context['request']
 	if articles.count() > 0:
 		# Get first and last articles
 		first = articles[len(articles)-1]
@@ -34,6 +35,6 @@ def blog_archive():
 		for i in range(year_range+1):
 			year_list.append(Year(latest_year - i))
 
-	return {'archive':year_list, 'show_empty':blog_settings.ARCHIVE_SHOW_EMPTY, 'show_count':blog_settings.ARCHIVE_SHOW_COUNT}
+	return {'archive':year_list, 'request':request, 'show_empty':show_empty, 'show_articles':show_articles, 'show_count':show_count }
 
 

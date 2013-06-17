@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from localeurl.models import reverse
 
 from mptt.models import MPTTModel, TreeForeignKey, TreeManyToManyField
 from multilingual_model.models import MultilingualModel, MultilingualTranslation
