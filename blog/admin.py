@@ -12,6 +12,7 @@ from multilingual_model.admin import TranslationInline
 from redactor.widgets import RedactorEditor
 
 from cmsbase.admin import PageAdmin, PageFormAdmin, PublishingWorkflowAdmin
+from cmsbase.widgets import AdminImageWidget, AdminCustomFileWidget
 
 from blog.models import *
 
@@ -38,6 +39,19 @@ class ArticleTranslationInline(TranslationInline):
 	template = 'admin/cmsbase/cms_translation_inline.html'
 
 
+# Article feature images
+
+class ImageInlineForm(forms.ModelForm):
+	image = forms.ImageField(label=_('Image'), widget=AdminImageWidget)
+	class Meta:
+		model=ArticleImage
+
+class ArticleImageInline(admin.TabularInline):
+	form = ImageInlineForm
+	model = ArticleImage
+	extra = 0
+	template = 'admin/cmsbase/page/images-inline.html'
+
 
 # Article
 
@@ -49,7 +63,7 @@ class ArticleAdminForm(PageFormAdmin):
 class ArticleAdmin(reversion.VersionAdmin, PublishingWorkflowAdmin):
 	form = ArticleAdminForm
 	
-	inlines = (ArticleTranslationInline, )
+	inlines = (ArticleTranslationInline, ArticleImageInline, )
 	ordering = ['-publish_date'] 
 
 	# Override the list display from PublishingWorkflowAdmin

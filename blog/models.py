@@ -5,7 +5,7 @@ from localeurl.models import reverse
 
 from mptt.models import MPTTModel, TreeForeignKey, TreeManyToManyField
 from multilingual_model.models import MultilingualModel, MultilingualTranslation
-from cmsbase.models import BasePage, PublishTranslation
+from cmsbase.models import BasePage, PublishTranslation, BasePageManager
 
 
 from blog import settings as blog_settings
@@ -37,16 +37,35 @@ class ArticleTranslation(MultilingualTranslation, PublishTranslation):
 		return dict(settings.LANGUAGES).get(self.language_code)
 
 
-class ArticleManager(models.Manager):
+class ArticleImage(models.Model):
 
-    def get_published_live(self):
-        return Article.objects.filter(published=True).exclude(published_from=None)
+	def call_naming(self, instance=None):
+		from cmsbase.widgets import get_media_upload_to
 
-    def get_published_original(self):
-        return Article.objects.filter(published=True, published_from=None)
+		# return get_media_upload_to(self.page.slug, 'pages')
+		location = "blog/%s/%s"%(self.parent.publish_date.year, self.parent.publish_date.month)
+		return get_media_upload_to(location, instance)
 
-    def get_originals(self):
-        return Article.objects.filter(published_from=None)
+	parent = models.ForeignKey('Article')
+	image = models.ImageField(upload_to=call_naming, max_length=100)
+	# Ordering
+	order_id = models.IntegerField(blank=True, null=True)
+
+	class Meta:
+		ordering = ('order_id',)
+		verbose_name = _('Image')
+		verbose_name_plural = _('Images')
+
+	def delete(self, *args, **kwargs):
+		from sorl.thumbnail import get_thumbnail
+		storage, path = self.image.storage, self.image.path
+		super(ArticleImage, self).delete(*args, **kwargs)
+		# Physically delete the file
+		storage.delete(path)
+
+
+class ArticleManager(BasePageManager):
+	pass
 
 # Subclass the Page model to create the article model
 
@@ -69,6 +88,7 @@ class Article(BasePage):
 		
 		# Indicate which Translation class to use for content
 		translation_class = ArticleTranslation
+		image_class = ArticleImage
 
 		# Provide the url name to create a url for that model
 		model_url_name = 'blog:article'
