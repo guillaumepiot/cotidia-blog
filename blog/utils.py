@@ -27,7 +27,7 @@ class Year(object):
 	 	# Create a list of Month instances for each month of the year
 		month_list = []
 		for i in range(12):
-			month_list.append(Month(self.year, i+1))
+			month_list.append(Month(self.year, 12-i))
 
 		return month_list
 
