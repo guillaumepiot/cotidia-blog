@@ -36,3 +36,15 @@ You can also pass those options on a tag basis by passing extra arguments to the
 For example, an archive that shows the articles and the article count per year & month will be:
 	
 	{% blog_archive 0 1 1 %}
+	
+	
+`get_latest_articles` populate the template context with a list of latest articles.
+
+	{% get_latest_articles 'limit' as latest_articles %}
+	
+Eg:
+	
+	{% get_latest_articles '1' as latest_articles %}
+	{% for article in latest_articles %}
+		{{article}}
+	{% endfor %}

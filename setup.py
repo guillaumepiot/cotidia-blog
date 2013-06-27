@@ -34,7 +34,7 @@ for dirpath, dirnames, filenames in os.walk('blog'):
             pkg = pkg.replace(os.path.altsep, '.')
         packages.append(pkg)
     elif filenames:
-        prefix = dirpath[12:] # Strip "blogbase/" or "blogbase\"
+        prefix = dirpath[9:] # Strip "blogbase/" or "blogbase\"
         for f in filenames:
             data_files.append(os.path.join(prefix, f))
 

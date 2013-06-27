@@ -38,3 +38,7 @@ def blog_archive(context, show_empty=blog_settings.ARCHIVE_SHOW_EMPTY, show_arti
 	return {'archive':year_list, 'request':request, 'show_empty':show_empty, 'show_articles':show_articles, 'show_count':show_count }
 
 
+@register.assignment_tag
+def get_latest_articles(limit = 3):
+    articles = Article.objects.get_published_live().order_by('-publish_date')[:int(limit)]
+    return articles
