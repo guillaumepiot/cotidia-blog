@@ -1,5 +1,6 @@
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
+from django.utils.timezone import now
 from blog.models import Article
 
 
@@ -24,10 +25,19 @@ class Year(object):
 		self.year = year
 
 	def months(self):
+		# We only want to show months in the past, so we'll check against the current date
+		current_date = now()
 	 	# Create a list of Month instances for each month of the year
 		month_list = []
 		for i in range(12):
-			month_list.append(Month(self.year, 12-i))
+			# If previous year, add all months regardless
+			if current_date.year > self.year:
+				month_list.append(Month(self.year, 12-i))
+			# Otherwise if current year or next, only show month before
+			elif current_date.year == self.year:
+				# Is the month inferior to the current one?
+				if current_date.month > (12-i):
+					month_list.append(Month(self.year, 12-i))
 
 		return month_list
 
