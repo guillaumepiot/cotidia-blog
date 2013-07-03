@@ -57,7 +57,6 @@ class ArticleImage(models.Model):
 		verbose_name_plural = _('Images')
 
 	def delete(self, *args, **kwargs):
-		from sorl.thumbnail import get_thumbnail
 		storage, path = self.image.storage, self.image.path
 		super(ArticleImage, self).delete(*args, **kwargs)
 		# Physically delete the file
