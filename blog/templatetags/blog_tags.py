@@ -18,6 +18,7 @@ def blog_categories():
 @register.inclusion_tag('blog/includes/_archive.html', takes_context=True)
 def blog_archive(context, show_empty=blog_settings.ARCHIVE_SHOW_EMPTY, show_articles=blog_settings.ARCHIVE_SHOW_ARTICLES, show_count=blog_settings.ARCHIVE_SHOW_COUNT):
 	archive = {}
+	year_list = []
 	articles = Article.objects.get_published_live().order_by('-publish_date')
 	request = context['request']
 	if articles.count() > 0:
@@ -31,7 +32,6 @@ def blog_archive(context, show_empty=blog_settings.ARCHIVE_SHOW_EMPTY, show_arti
 		year_range = latest_year - earliest_year
 
 		# Create year list
-		year_list = []
 		for i in range(year_range+1):
 			year_list.append(Year(latest_year - i))
 
