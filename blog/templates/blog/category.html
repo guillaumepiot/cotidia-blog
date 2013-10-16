@@ -2,7 +2,7 @@
 {% block navigation %}{% blog_nav %}{% endblock navigation %}
 {% block breadcrumbs %}
 <ul class="breadcrumb">
-  <li><a href="{% url 'blog:categories' %}">{% trans "Categories" %}</a> <span class="divider">/</span></li>
+  <li><a href="{% url 'blog:categories' %}">{% trans "Categories" %}</a> <span class="divider"></span></li>
   <li class="active">{{category.translated.title}}</li>
 </ul>
 {% endblock %}

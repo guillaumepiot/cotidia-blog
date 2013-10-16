@@ -149,3 +149,6 @@ class Category(MPTTModel, MultilingualModel):
 
 	def get_absolute_url(self):
 		return reverse('blog:category', kwargs={'slug':self.translated().slug})
+
+	def article_count(self):
+		return Article.objects.get_published_live().filter(published_from__categories=self.id).count()
