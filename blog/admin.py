@@ -16,6 +16,7 @@ from cmsbase.widgets import AdminImageWidget, AdminCustomFileWidget
 
 from blog.models import *
 
+from filemanager.widgets import MultipleFileWidget
 
 # Article translation
 
@@ -41,29 +42,30 @@ class ArticleTranslationInline(TranslationInline):
 
 # Article feature images
 
-class ImageInlineForm(forms.ModelForm):
-	image = forms.ImageField(label=_('Image'), widget=AdminImageWidget)
-	class Meta:
-		model=ArticleImage
+# class ImageInlineForm(forms.ModelForm):
+# 	image = forms.ImageField(label=_('Image'), widget=AdminImageWidget)
+# 	class Meta:
+# 		model=ArticleImage
 
-class ArticleImageInline(admin.TabularInline):
-	form = ImageInlineForm
-	model = ArticleImage
-	extra = 0
-	template = 'admin/cmsbase/page/images-inline.html'
+# class ArticleImageInline(admin.TabularInline):
+# 	form = ImageInlineForm
+# 	model = ArticleImage
+# 	extra = 0
+# 	template = 'admin/cmsbase/page/images-inline.html'
 
 
 # Article
 
 class ArticleAdminForm(PageFormAdmin):
 	categories = forms.ModelMultipleChoiceField(queryset=Category.objects.filter(), widget=forms.CheckboxSelectMultiple, required=False)
+	images = forms.CharField(widget=MultipleFileWidget, required=False)
 	class Meta:
 		model = Article
 
 class ArticleAdmin(reversion.VersionAdmin, PublishingWorkflowAdmin):
 	form = ArticleAdminForm
 	
-	inlines = (ArticleTranslationInline, ArticleImageInline, )
+	inlines = (ArticleTranslationInline, ) #, ArticleImageInline
 	ordering = ['-publish_date'] 
 
 	# Override the list display from PublishingWorkflowAdmin
@@ -77,8 +79,19 @@ class ArticleAdmin(reversion.VersionAdmin, PublishingWorkflowAdmin):
 		('Settings', {
 			#'description':_('The page template'),
 			'classes': ('default',),
-			'fields': ('template', 'publish_date', 'slug', 'categories')
+			'fields': ('template', 'publish_date', 'slug',)
 		}),
+		('Images', {
+			#'description':_('The page template'),
+			'classes': ('default',),
+			'fields': ('images', )
+		}),
+		('Categories', {
+			#'description':_('The page template'),
+			'classes': ('default',),
+			'fields': ('categories',)
+		}),
+		
 	)
 
 	class Media:
