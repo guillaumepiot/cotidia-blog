@@ -14,6 +14,7 @@ CLASSIFIERS = [
 ]
 
 install_requires = [
+    'pytz',
 ]
 
 # taken from django-registration
