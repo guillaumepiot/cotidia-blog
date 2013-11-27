@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+from blog.feeds import LatestEntriesFeed
 
 urlpatterns = patterns('blog',
 
@@ -13,6 +14,9 @@ urlpatterns = patterns('blog',
 	# Archive
 	url(r'^archive/(?P<year>[\d]+)/$', 'views.archive', name="archive_year"),
 	url(r'^archive/(?P<year>[\d]+)/(?P<month>[\d]+)/$', 'views.archive', name="archive_month"),
+
+	# RSS feed
+	(r'^feed/$', LatestEntriesFeed()),
 
 	# Article view
 	url(r'^(?P<slug>[-\w\/]+)/$', 'views.article', name="article"),

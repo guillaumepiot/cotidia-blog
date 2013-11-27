@@ -16,6 +16,15 @@ Install the database using the South migrations:
 
 	$ python manage.py migrate blog
 
+URLs
+----
+
+urlpatterns = patterns('',
+    ...
+    url(r'blog/', include('blog.urls', namespace='blog')),
+    ...
+)
+
 Settings
 --------
 
