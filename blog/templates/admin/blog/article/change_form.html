@@ -3,16 +3,16 @@
 
 {% block breadcrumbs %}
 
-	{{block.super}}
-	
-	{% if original and not original.has_published_version %}
-	<div class="alert alert-warning"><i class="icon-time"></i> {% blocktrans with opts.module_name|capfirst as module_name %}{{module_name}} is not published and requires moderation{% endblocktrans %}</div>
-	{% elif original and original.has_published_version and not original.approval_needed %}
-	<div class="alert alert-success"><i class="icon-ok"></i> {% blocktrans with opts.module_name|capfirst as module_name %}{{module_name}} is currently published {% endblocktrans %}</div>
-	{% elif original and original.has_published_version and original.approval_needed %}
-	<div class="alert alert-warning"><i class="icon-ok"></i> {% blocktrans with opts.module_name|capfirst as module_name %}{{module_name}} has an older version published but the latest update needs moderation{% endblocktrans %}</div>
-	{% endif %}
-	
+    {{block.super}}
+    
+    {% if original and not original.has_published_version %}
+    <div class="alert alert-warning"><i class="icon-time"></i> {% blocktrans with opts.module_name|capfirst as module_name %}{{module_name}} is not published and requires moderation{% endblocktrans %}</div>
+    {% elif original and original.has_published_version and not original.approval_needed %}
+    <div class="alert alert-success"><i class="icon-ok"></i> {% blocktrans with opts.module_name|capfirst as module_name %}{{module_name}} is currently published {% endblocktrans %}</div>
+    {% elif original and original.has_published_version and original.approval_needed %}
+    <div class="alert alert-warning"><i class="icon-ok"></i> {% blocktrans with opts.module_name|capfirst as module_name %}{{module_name}} has an older version published but the latest update needs moderation{% endblocktrans %}</div>
+    {% endif %}
+    
 {% endblock %}
 
 {% block content %}
@@ -32,49 +32,43 @@
 
 {% block field_sets %}
 
-<div class="row-fluid">
-	<div class="span9">
-		<div class="inner">
-		{% for inline_admin_formset in inline_admin_formsets %}
-		    {% include inline_admin_formset.opts.template %}
-		{% endfor %}
-		</div>
-	</div>
-	<div class="span3">	
-		<div class="inner">
-		{% for fieldset in adminform %}
-			{% include "admin/includes/fieldset.html" %}
-		{% endfor %}
-		<div class="form-actions">
-			<div class="row-fluid">
-				<div class="span12">
-					
-					{% if original %}<li><a href="delete/" class="deletelink btn btn-danger float-right">{% trans "Delete" %}</a></li>{% endif %}
-					
-					
-					<div class="btn-group float-left">
-					  <button class="btn btn-primary" type="submit" name="_save">{% trans 'Save' %}</button>
-					  <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-					    <span class="caret"></span>
-					  </button>
-					  <ul class="dropdown-menu">
-					  	
-					  	{% if perms.cmsbase.can_publish and original %}<li><button type="submit" name="_publish">{% trans 'Save and publish' %}</button></li>{% endif %}
-					  	<li><button type="submit" name="_preview">{% trans 'Save and preview' %}</button></li>
-					    <li><button type="submit" name="_continue">{% trans 'Save and continue editing' %}</button></li>
-					    
-					  </ul>
-					</div>
-					<a href="{% url opts|admin_urlname:'changelist' %}" class="small gray float-left cancel">{% trans "Cancel" %}</a>
-					
-					
-					
-				</div>
-			</div>
+<div class="row">
+    <div class="col-md-9">
+        <div class="inner">
+        {% for inline_admin_formset in inline_admin_formsets %}
+            {% include inline_admin_formset.opts.template %}
+        {% endfor %}
+        </div>
+    </div>
+    <div class="col-md-3">  
+        <div class="inner sidebar">
+        {% for fieldset in adminform %}
+            {% include "admin/includes/fieldset.html" %}
+        {% endfor %}
+        </div>
+    </div>
+</div>
 
-		</div>
-		</div>
-	</div>
+
+<div class="form-actions">
+    <div class="row-fluid">
+        <div class="span12">
+            
+            {% if original %}<li><a href="delete/" class="deletelink btn btn-danger pull-right">{% trans "Delete" %}</a></li>{% endif %}
+            
+            <button class="btn btn-primary" type="submit" name="_save">{% trans 'Save' %}</button>
+            <div class="btn-group">
+              
+                {% if perms.cmsbase.can_publish and original %}
+                <button type="submit" name="_publish" class="btn btn-default">{% trans 'Save & Publish' %}</button>
+                <button type="submit" name="_preview" class="btn btn-default">{% trans 'Save & Preview' %}</button>
+                {% endif %}
+                <button type="submit" name="_continue" class="btn btn-default">{% trans 'Save & Continue editing' %}</button>
+
+            </div>
+            <a href="{% url opts|admin_urlname:'changelist' %}" class="small gray cancel">{% trans "Cancel" %}</a>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

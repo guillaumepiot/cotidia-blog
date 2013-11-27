@@ -6,7 +6,7 @@ from blog.models import Article
 
 class LatestEntriesFeed(Feed):
     title = "Blog"
-    #link = "/feed/"
+    link = '/blog/feed/'
 
     def items(self):
         return Article.objects.get_published_live()[:10]
