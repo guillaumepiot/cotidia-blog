@@ -11,7 +11,17 @@
 		
 		<h1>{{article.translated.title}}</h1>
 		{{article.translated.content|safe}}
+		{% if article.published_from %}
+		<p class="categories">{% trans "Categories" %}: {% for category in article.published_from.categories.all %}<a href="{{category.get_absolute_url}}">{{category.translated.title}}</a>{% if not forloop.last %},{% endif %} {% endfor %}</p>
+		{% else %}
 		<p class="categories">{% trans "Categories" %}: {% for category in article.categories.all %}<a href="{{category.get_absolute_url}}">{{category.translated.title}}</a>{% if not forloop.last %},{% endif %} {% endfor %}</p>
+		{% endif %}
+		
+		{% if article.published_from %}
+		<p class="authors">{% trans "Categories" %}: {% for category in article.published_from.authors.all %}<a href="{{author.get_absolute_url}}">{{author}}</a>{% if not forloop.last %},{% endif %} {% endfor %}</p>
+		{% else %}
+		<p class="authors">{% trans "Categories" %}: {% for category in article.categories.all %}<a href="{{author.get_absolute_url}}">{{author}}</a>{% if not forloop.last %},{% endif %} {% endfor %}</p>
+		{% endif %}
 		
 	</div>
 	<div class="span3">

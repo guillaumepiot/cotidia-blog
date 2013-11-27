@@ -69,6 +69,7 @@ class ArticleTranslationInline(TranslationInline):
 
 class ArticleAdminForm(PageFormAdmin):
     categories = forms.ModelMultipleChoiceField(queryset=Category.objects.filter(), widget=forms.CheckboxSelectMultiple, required=False)
+    authors = forms.ModelMultipleChoiceField(queryset=Author.objects.filter(), widget=forms.CheckboxSelectMultiple, required=False)
     class Meta:
         model = Article
 
@@ -90,6 +91,11 @@ class ArticleAdmin(reversion.VersionAdmin, PublishingWorkflowAdmin):
             #'description':_('The page template'),
             'classes': ('default',),
             'fields': ('template', 'publish_date', 'slug',)
+        }),
+        ('Authors', {
+            #'description':_('The page template'),
+            'classes': ('default',),
+            'fields': ('authors',)
         }),
         ('Categories', {
             #'description':_('The page template'),
@@ -171,3 +177,63 @@ class CategoryAdmin(MPTTModelAdmin):
         js = ("admin/js/page.js",)
 
 admin.site.register(Category, CategoryAdmin)
+
+
+# Author translation
+
+class AuthorTranslationInline(TranslationInline):
+    model = AuthorTranslation
+    extra = 0 if settings.PREFIX_DEFAULT_LOCALE else 1
+    template = 'admin/cmsbase/cms_translation_inline.html'
+
+class AuthorForm(forms.ModelForm):
+    photo = forms.ImageField(label=_('Photo'), widget=AdminImageWidget)
+    class Meta:
+        model = Author
+
+# Category
+
+class AuthorAdmin(admin.ModelAdmin):
+    form = AuthorForm
+
+    list_display = ["title", "identifier", "published", 'order_id', 'languages']
+    inlines = (AuthorTranslationInline, )
+
+
+    def title(self, obj):
+        return '%s %s' % (obj.first_name, obj.last_name)
+
+    def languages(self, obj):
+        ts=[]
+        for t in obj.get_translations():
+            ts.append(u'<img src="/static/admin/img/flags/%s.png" alt="" rel="tooltip" data-title="%s">' % (t.language_code, t.__unicode__()))
+        return ' '.join(ts)
+
+    languages.allow_tags = True
+    languages.short_description = 'Translations'
+
+    # Override the list display from PublishingWorkflowAdmin
+    def get_list_display(self, request, obj=None):
+        if not settings.PREFIX_DEFAULT_LOCALE:
+            return ["title", "identifier", "published", 'order_id']
+        else:
+            return ["title", "identifier", "published", 'order_id', 'languages']
+
+    fieldsets = (
+
+        
+        ('Settings', {
+            #'description':_('The page template'),
+            'classes': ('default',),
+            'fields': ('published', 'first_name', 'last_name', 'photo', 'order_id', 'identifier', )
+        }),
+
+    )
+
+    class Media:
+        css = {
+            "all": ("admin/css/page.css",)
+        }
+        #js = ("admin/js/page.js",)
+
+admin.site.register(Author, AuthorAdmin)

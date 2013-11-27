@@ -37,30 +37,30 @@ class ArticleTranslation(MultilingualTranslation, PublishTranslation):
 		return dict(settings.LANGUAGES).get(self.language_code)
 
 
-class ArticleImage(models.Model):
+# class ArticleImage(models.Model):
 
-	def call_naming(self, instance=None):
-		from cmsbase.widgets import get_media_upload_to
+# 	def call_naming(self, instance=None):
+# 		from cmsbase.widgets import get_media_upload_to
 
-		# return get_media_upload_to(self.page.slug, 'pages')
-		location = "blog/%s/%s"%(self.parent.publish_date.year, self.parent.publish_date.month)
-		return get_media_upload_to(location, instance)
+# 		# return get_media_upload_to(self.page.slug, 'pages')
+# 		location = "blog/%s/%s"%(self.parent.publish_date.year, self.parent.publish_date.month)
+# 		return get_media_upload_to(location, instance)
 
-	parent = models.ForeignKey('Article')
-	image = models.ImageField(upload_to=call_naming, max_length=100)
-	# Ordering
-	order_id = models.IntegerField(blank=True, null=True)
+# 	parent = models.ForeignKey('Article')
+# 	image = models.ImageField(upload_to=call_naming, max_length=100)
+# 	# Ordering
+# 	order_id = models.IntegerField(blank=True, null=True)
 
-	class Meta:
-		ordering = ('order_id',)
-		verbose_name = _('Image')
-		verbose_name_plural = _('Images')
+# 	class Meta:
+# 		ordering = ('order_id',)
+# 		verbose_name = _('Image')
+# 		verbose_name_plural = _('Images')
 
-	def delete(self, *args, **kwargs):
-		storage, path = self.image.storage, self.image.path
-		super(ArticleImage, self).delete(*args, **kwargs)
-		# Physically delete the file
-		storage.delete(path)
+# 	def delete(self, *args, **kwargs):
+# 		storage, path = self.image.storage, self.image.path
+# 		super(ArticleImage, self).delete(*args, **kwargs)
+# 		# Physically delete the file
+# 		storage.delete(path)
 
 
 class ArticleManager(BasePageManager):
@@ -72,6 +72,7 @@ class Article(BasePage):
 	# Extra fields
 	publish_date = models.DateTimeField()
 	categories = TreeManyToManyField('Category', blank=True)
+	authors = models.ManyToManyField('Author', blank=True)
 	# Manager
 	objects = ArticleManager()
 
@@ -87,7 +88,6 @@ class Article(BasePage):
 		
 		# Indicate which Translation class to use for content
 		translation_class = ArticleTranslation
-		image_class = ArticleImage
 
 		# Provide the url name to create a url for that model
 		model_url_name = 'blog:article'
@@ -152,3 +152,61 @@ class Category(MPTTModel, MultilingualModel):
 
 	def article_count(self):
 		return Article.objects.get_published_live().filter(published_from__categories=self.id).count()
+
+# Blog categories
+
+class AuthorTranslation(MultilingualTranslation):
+	parent = models.ForeignKey('Author', related_name='translations')
+	bio = models.TextField(_('Bio'), max_length=100)
+
+	class Meta:
+		unique_together = ('parent', 'language_code')
+
+		if len(settings.LANGUAGES) > 1:
+			verbose_name=_('Translation')
+			verbose_name_plural=_('Translations')
+		else:
+			verbose_name=_('Bio')
+			verbose_name_plural=_('Bio')
+
+	def __unicode__(self):
+		return dict(settings.LANGUAGES).get(self.language_code)
+
+	
+
+class Author(MultilingualModel):
+	identifier = models.SlugField(max_length=100)
+	published = models.BooleanField(_('Active'))
+	first_name = models.CharField(_('First name'), max_length=100)
+	last_name = models.CharField(_('Last name'), max_length=100)
+	photo = models.ImageField(_('Photo'), upload_to="author")
+	order_id = models.IntegerField()
+
+	class Meta:
+		verbose_name=_('Author')
+		verbose_name_plural=_('Authors')
+		ordering = ['order_id']
+
+	class CMSMeta:
+		translation_class = AuthorTranslation
+
+	def __unicode__(self):
+		return self.unicode_wrapper('first_name', default='Unnamed')
+
+	def get_translations(self):
+		return self.CMSMeta.translation_class.objects.filter(parent=self)
+
+	def translated(self):
+		from django.utils.translation import get_language
+
+		try:
+			translation = self.CMSMeta.translation_class.objects.get(language_code=get_language(), parent=self)
+			return translation
+		except:
+			return self.CMSMeta.translation_class.objects.get(language_code=settings.LANGUAGE_CODE, parent=self)
+
+	def get_absolute_url(self):
+		return reverse('blog:author', kwargs={'slug':self.identifier})
+
+	def article_count(self):
+		return Article.objects.get_published_live().filter(published_from__authors=self.id).count()

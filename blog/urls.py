@@ -10,6 +10,9 @@ urlpatterns = patterns('blog',
 	# Categories
 	url(r'^categories/$', 'views.categories', name="categories"),
 	url(r'^category/(?P<slug>[-\w]+)/$', 'views.category', name="category"),
+
+	# Authors
+	url(r'^author/(?P<slug>[-\w]+)/$', 'views.author', name="author"),
 	
 	# Archive
 	url(r'^archive/(?P<year>[\d]+)/$', 'views.archive', name="archive_year"),

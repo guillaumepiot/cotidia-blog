@@ -7,7 +7,7 @@ from django.conf import settings
 
 from cmsbase.views import page_processor
 
-from blog.models import Article, ArticleTranslation, Category, CategoryTranslation
+from blog.models import Article, ArticleTranslation, Category, CategoryTranslation, Author
 from blog import settings as blog_settings
 from blog.utils import MONTH_NAMES
 
@@ -33,6 +33,12 @@ def category(request, slug):
 	_category = _category_translation.parent
 	articles = Article.objects.get_published_live().filter(published_from__categories=_category)
 	return render_to_response('blog/category.html', {'category':_category, 'articles':articles}, context_instance=RequestContext(request))
+
+def author(request, slug):
+
+	_author = get_object_or_404(Author, identifier=slug)
+	articles = Article.objects.get_published_live().filter(published_from__authors=_author)
+	return render_to_response('blog/author.html', {'author':_author, 'articles':articles}, context_instance=RequestContext(request))
 
 def archive(request, year, month=False):
 	if month:
