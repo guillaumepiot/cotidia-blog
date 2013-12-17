@@ -48,3 +48,28 @@ Eg:
 	{% for article in latest_articles %}
 		{{article}}
 	{% endfor %}
+
+`get_latest_by_author` populate the template context with a list of latest articles from a specific author.
+
+Required paramater:
+
+- author: the author instance
+
+Optional:
+
+- limit: how many article tp return
+- exclude: an article instance to exclude from the results (useful if showing related article on the article view page)
+
+Eg:
+
+	{% get_latest_by_author author 3 article as author_articles %}
+	<ul class="more-from-author">
+		{% for a in author_articles %}
+		<li>
+			<a href="{{a.get_absolute_url}}">{{a.translated.title}}</a>
+			<em>{{a.publish_date|date:'d.m.Y'}}</em> 
+		</li>
+		{% endfor %}
+		
+	</ul>
+
