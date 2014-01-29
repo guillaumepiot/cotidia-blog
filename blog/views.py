@@ -5,14 +5,62 @@ from django.template.context import RequestContext
 from localeurl.models import reverse
 from django.conf import settings
 
-from cmsbase.views import page_processor
+from cmsbase.views import page_processor, get_page
 
 from blog.models import Article, ArticleTranslation, Category, CategoryTranslation, Author
 from blog import settings as blog_settings
 from blog.utils import MONTH_NAMES
 
-@page_processor(model_class=Article, translation_class=ArticleTranslation)
-def article(request, article, slug):
+
+# Page decorator
+# Cover the basic handling such as page object lookup, redirect, 404, preview mode, language switching url switching
+def blog_processor(model_class=Article, translation_class=ArticleTranslation):
+	def wrap(f):
+		def wrapper(request, year, month, day, slug, *args, **kwargs):
+
+			# Check if the preview variable is in the path
+			preview = request.GET.get('preview', False)
+
+			# Set preview to False by default
+			is_preview = False
+
+			# Make sure the user has the right to see the preview
+			if request.user.is_authenticated() and not preview == False:
+				is_preview = True
+
+			filter_args = {'parent__publish_date__year':int(year), 'parent__publish_date__month':int(month), 'parent__publish_date__day':int(day)}
+			# Is it home page or not?
+			page = get_page(request=request, model_class=model_class, translation_class=translation_class, slug=slug, preview=is_preview, filter_args=filter_args)
+
+			# Check if any page exists at all
+			# Then Raise a 404 if no page can be found
+			if not page:
+				raise Http404('This article does not exists')
+
+			else:
+				# Hard redirect if specified in page attributes
+				if page.redirect_to:
+					return HttpResponseRedirect(page.redirect_to.get_absolute_url())
+				if page.redirect_to_url:
+					return HttpResponseRedirect(page.redirect_to_url)
+
+				# When you switch language it will load the right translation but stay on the same slug
+				# So we need to redirect to the right translated slug if not on it already
+				page_url = page.get_absolute_url()
+
+				if not page_url == request.path and slug and not cms_settings.CMS_PREFIX:
+					return HttpResponseRedirect(page_url)
+
+			# Assign is_preview to the request object for cleanliness
+			request.is_preview = is_preview
+
+			return f(request, page, year, month, day, slug, *args, **kwargs)
+		return wrapper
+	return wrap
+
+
+@blog_processor(model_class=Article, translation_class=ArticleTranslation)
+def article(request, article, year, month, day, slug):
 
 	if not article:
 		template = blog_settings.BLOG_TEMPLATES[0][0]

@@ -22,6 +22,6 @@ urlpatterns = patterns('blog',
 	url(r'^feed/$', LatestEntriesFeed(), name="feed"),
 
 	# Article view
-	url(r'^(?P<slug>[-\w\/]+)/$', 'views.article', name="article"),
+	url(r'^(?P<year>[\d]+)/(?P<month>[\d]+)/(?P<day>[\d]+)/(?P<slug>[-\w\/]+)/$', 'views.article', name="article"),
 
 )

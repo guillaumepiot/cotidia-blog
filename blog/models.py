@@ -92,6 +92,9 @@ class Article(BasePage):
 		# Provide the url name to create a url for that model
 		model_url_name = 'blog:article'
 
+	def get_absolute_url(self):
+		return super(Article, self).get_absolute_url(urlargs={'year':self.publish_date.year, 'month':self.publish_date.month, 'day':self.publish_date.day})
+
 		
 # Blog categories
 
