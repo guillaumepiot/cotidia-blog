@@ -10,31 +10,46 @@ from mptt.admin import MPTTModelAdmin
 from multilingual_model.admin import TranslationInline
 
 from redactor.widgets import RedactorEditor
+from datetimewidget.widgets import DateTimeWidget
 
-from cmsbase.admin import PageAdmin, PageFormAdmin, PublishingWorkflowAdmin
+from cmsbase.admin import PageAdmin, PageFormAdmin, PublishingWorkflowAdmin, PageDataSetAdminForm
+from cmsbase.admin_forms import TranslationForm 
 from cmsbase.widgets import AdminImageWidget, AdminCustomFileWidget
 
 from blog.models import *
+from blog import settings as blog_settings
 
 from filemanager.widgets import MultipleFileWidget
 
-# Article translation
+if blog_settings.ENABLE_TAGGING:
+    from tagging.forms import TagField
+    from blog.widgets import TagAutocomplete
 
-class ArticleTranslationInlineFormAdmin(forms.ModelForm):
-    slug = forms.SlugField(label=_('Article URL'))
-    content = forms.CharField(widget=RedactorEditor(redactor_css="/static/css/redactor-editor.css"), required=False)
-    images = forms.CharField(widget=MultipleFileWidget, required=False)
+class ArticleTranslationForm(TranslationForm):
     class Meta:
         model = ArticleTranslation
+        exclude = ['content']
 
-    def has_changed(self):
-        """ Should returns True if data differs from initial.
-        By always returning true even unchanged inlines will get validated and saved."""
-        return True
+    def __init__(self, *args, **kwargs):
+        super(ArticleTranslationForm, self).__init__(*args, **kwargs)
+        if blog_settings.ENABLE_TAGGING:
+            self.fields['tags'] = TagField(widget=TagAutocomplete(), required=False, help_text=_('Please enter a list of comma separated keywords.'))
+            # Add tags to the fieldsets
+            self._fieldsets[0][1]['fields'].append('tags')
+
+class ArticleAdminForm(PageFormAdmin):
+    publish_date = forms.DateTimeField(widget=DateTimeWidget(attrs={'id':"datetime-picker"}, usel10n = True))
+    categories = forms.ModelMultipleChoiceField(queryset=Category.objects.filter(), widget=forms.CheckboxSelectMultiple, required=False)
+    authors = forms.ModelMultipleChoiceField(queryset=Author.objects.filter(), widget=forms.CheckboxSelectMultiple, required=False)
+    images = forms.CharField(widget=MultipleFileWidget, required=False)
+    class Meta:
+        model = Article
 
     def __init__(self, *args, **kwargs):
         from django.contrib.contenttypes.models import ContentType
-        super(ArticleTranslationInlineFormAdmin, self).__init__(*args, **kwargs)
+        super(ArticleAdminForm, self).__init__(*args, **kwargs)
+        if not blog_settings.BLOG_ENABLE_CATEGORIES:
+            del self.fields['categories']
 
         if self.instance:
             content_type = ContentType.objects.get_for_model(self.instance)
@@ -43,40 +58,12 @@ class ArticleTranslationInlineFormAdmin(forms.ModelForm):
         else:
             self.fields['images'].widget.attrs.update({'content_type':False, 'object_pk':False})
 
-class ArticleTranslationInline(TranslationInline):
-    model = ArticleTranslation
-    form = ArticleTranslationInlineFormAdmin
-    extra = 0 if settings.PREFIX_DEFAULT_LOCALE else 1
-    prepopulated_fields = {'slug': ('title',)}
-    template = 'admin/cmsbase/cms_translation_inline.html'
 
-
-# Article feature images
-
-# class ImageInlineForm(forms.ModelForm):
-#   image = forms.ImageField(label=_('Image'), widget=AdminImageWidget)
-#   class Meta:
-#       model=ArticleImage
-
-# class ArticleImageInline(admin.TabularInline):
-#   form = ImageInlineForm
-#   model = ArticleImage
-#   extra = 0
-#   template = 'admin/cmsbase/page/images-inline.html'
-
-
-# Article
-
-class ArticleAdminForm(PageFormAdmin):
-    categories = forms.ModelMultipleChoiceField(queryset=Category.objects.filter(), widget=forms.CheckboxSelectMultiple, required=False)
-    authors = forms.ModelMultipleChoiceField(queryset=Author.objects.filter(), widget=forms.CheckboxSelectMultiple, required=False)
-    class Meta:
-        model = Article
-
+        
 class ArticleAdmin(reversion.VersionAdmin, PublishingWorkflowAdmin):
     form = ArticleAdminForm
+    translation_form_class = ArticleTranslationForm
     
-    inlines = (ArticleTranslationInline, ) #, ArticleImageInline
     ordering = ['-publish_date'] 
 
     # Override the list display from PublishingWorkflowAdmin
@@ -87,23 +74,39 @@ class ArticleAdmin(reversion.VersionAdmin, PublishingWorkflowAdmin):
             return ['title', 'is_published', 'approval', 'publish_date', 'template', 'languages']
 
     fieldsets = (
+        
         ('Settings', {
-            #'description':_('The page template'),
             'classes': ('default',),
-            'fields': ('template', 'publish_date', 'slug',)
+            'fields': ('display_title', 'template', 'dataset',  'parent', 'publish_date' )
         }),
         ('Authors', {
             #'description':_('The page template'),
             'classes': ('default',),
             'fields': ('authors',)
         }),
-        ('Categories', {
+        ('Images', {
             #'description':_('The page template'),
             'classes': ('default',),
-            'fields': ('categories',)
+            'fields': ('images',)
         }),
-        
+
     )
+
+    if blog_settings.BLOG_ENABLE_CATEGORIES:
+        fieldsets = fieldsets + (
+            ('Categories', {
+                #'description':_('The page template'),
+                'classes': ('default',),
+                'fields': ('categories',)
+            }),
+        )
+    # if blog_settings.ENABLE_TAGGING:
+    #     fieldsets = fieldsets + (
+    #         ('', {
+    #             'classes': ('default',),
+    #             'fields': ('tags',)
+    #         }),
+    #     )
 
     class Media:
         css = {
@@ -111,9 +114,23 @@ class ArticleAdmin(reversion.VersionAdmin, PublishingWorkflowAdmin):
         }
         js = ("admin/js/page.js",)
 
+    # def get_urls(self):
+    #     from django.conf.urls import patterns, url
+    #     urls = super(ArticleAdmin, self).get_urls()
+    #     my_urls = patterns('',
+    #         url(r'translation/(?P<page_id>[-\w]+)/(?P<language_code>[-\w]+)/', self.admin_site.admin_view(add_edit_translation), {'translation_class':self.model.CMSMeta.translation_class}, name='add_edit_translation' ),
+    #     )
+    #     return my_urls + urls
+
 admin.site.register(Article, ArticleAdmin)
 
 
+
+class ArticleDataSetAdmin(reversion.VersionAdmin):
+    form = PageDataSetAdminForm
+
+
+admin.site.register(ArticleDataSet, ArticleDataSetAdmin)
 
 
 
@@ -121,16 +138,20 @@ admin.site.register(Article, ArticleAdmin)
 
 class CategoryTranslationInline(TranslationInline):
     model = CategoryTranslation
-    extra = 0 if settings.PREFIX_DEFAULT_LOCALE else 1
     prepopulated_fields = {'slug': ('title',)}
-    template = 'admin/cmsbase/cms_translation_inline.html'
 
 
 
 # Category
 
-class CategoryAdmin(MPTTModelAdmin):
+class CategoryForm(forms.ModelForm):
+    required_css_class = 'required'
+    error_css_class = 'errorfield'
+    class Meta:
+        model = Category
 
+class CategoryAdmin(MPTTModelAdmin):
+    form = CategoryForm
     list_display = ["title", "identifier", "published", 'order_id', 'languages']
     inlines = (CategoryTranslationInline, )
     mptt_indent_field = 'title'
@@ -176,18 +197,19 @@ class CategoryAdmin(MPTTModelAdmin):
         }
         js = ("admin/js/page.js",)
 
-admin.site.register(Category, CategoryAdmin)
+if blog_settings.BLOG_ENABLE_CATEGORIES:
+    admin.site.register(Category, CategoryAdmin)
 
 
 # Author translation
 
 class AuthorTranslationInline(TranslationInline):
     model = AuthorTranslation
-    extra = 0 if settings.PREFIX_DEFAULT_LOCALE else 1
-    template = 'admin/cmsbase/cms_translation_inline.html'
 
 class AuthorForm(forms.ModelForm):
-    photo = forms.ImageField(label=_('Photo'), widget=AdminImageWidget)
+    required_css_class = 'required'
+    error_css_class = 'errorfield'
+    photo = forms.ImageField(label=_('Photo'), widget=AdminImageWidget, required=False)
     class Meta:
         model = Author
 

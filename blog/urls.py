@@ -1,6 +1,8 @@
 from django.conf.urls import patterns, include, url
 from blog.feeds import LatestEntriesFeed
 
+from blog import settings as blog_settings
+
 urlpatterns = patterns('blog',
 
 	# Default
@@ -10,6 +12,7 @@ urlpatterns = patterns('blog',
 	# Categories
 	url(r'^categories/$', 'views.categories', name="categories"),
 	url(r'^category/(?P<slug>[-\w]+)/$', 'views.category', name="category"),
+	url(r'^tag/$', 'views.tag', name="tag"),
 
 	# Authors
 	url(r'^author/(?P<slug>[-\w]+)/$', 'views.author', name="author"),
@@ -23,5 +26,11 @@ urlpatterns = patterns('blog',
 
 	# Article view
 	url(r'^(?P<year>[\d]+)/(?P<month>[\d]+)/(?P<day>[\d]+)/(?P<slug>[-\w\/]+)/$', 'views.article', name="article"),
+	
 
 )
+
+if blog_settings.ENABLE_TAGGING:
+	from tagging_autocomplete.urls import urlpatterns as tagging_patterns
+	urlpatterns = urlpatterns + tagging_patterns
+	

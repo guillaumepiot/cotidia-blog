@@ -31,6 +31,12 @@
 		
 		<p>{% trans "Archive" %}</p>
 		{% blog_archive %}
+
+		<p>{% trans "Tags" %}</p>
+		{% tags_for_object article.translated as article_tags %}
+		{% for tag in article_tags %}
+			<a href="{% url 'blog:tag' %}?tag={{tag.name}}">{{tag|capfirst}}</a>{% if not forloop.last %}, {% endif %}
+		{% endfor %}
 		
 	</div>
 </div>

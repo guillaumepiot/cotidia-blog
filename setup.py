@@ -15,6 +15,7 @@ CLASSIFIERS = [
 
 install_requires = [
     'pytz',
+    'django-datetime-widget==0.6',
 ]
 
 # taken from django-registration

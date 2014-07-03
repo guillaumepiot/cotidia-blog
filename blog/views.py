@@ -6,6 +6,8 @@ from localeurl.models import reverse
 from django.conf import settings
 
 from cmsbase.views import page_processor, get_page
+from cmsbase import settings as cms_settings
+from tagging.models import Tag, TaggedItem
 
 from blog.models import Article, ArticleTranslation, Category, CategoryTranslation, Author
 from blog import settings as blog_settings
@@ -81,6 +83,19 @@ def category(request, slug):
 	_category = _category_translation.parent
 	articles = Article.objects.get_published_live().filter(published_from__categories=_category)
 	return render_to_response('blog/category.html', {'category':_category, 'articles':articles}, context_instance=RequestContext(request))
+
+def tag(request):
+	if not request.GET.get('tag'):
+		return HttpResponseRedirect(reverse('blog:latest'))
+	else:
+		slug = request.GET.get('tag')
+		from django.utils.translation import get_language
+		tag = get_object_or_404(Tag, name=slug)
+		queryset = ArticleTranslation.objects.filter(language_code=get_language()).exclude(parent__published_from=None)
+		queryset = TaggedItem.objects.get_by_model(queryset, tag)
+
+	return render_to_response('blog/tag.html', {'tag':tag, 'articles':queryset}, context_instance=RequestContext(request))
+
 
 def author(request, slug):
 

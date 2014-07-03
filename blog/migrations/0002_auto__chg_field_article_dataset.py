@@ -8,50 +8,26 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting field 'Author.rght'
-        db.delete_column(u'blog_author', u'rght')
 
-        # Deleting field 'Author.tree_id'
-        db.delete_column(u'blog_author', u'tree_id')
-
-        # Deleting field 'Author.lft'
-        db.delete_column(u'blog_author', u'lft')
-
-        # Deleting field 'Author.level'
-        db.delete_column(u'blog_author', u'level')
-
+        # Changing field 'Article.dataset'
+        db.alter_column(u'blog_article', 'dataset_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['blog.ArticleDataSet'], null=True))
 
     def backwards(self, orm):
-        # Adding field 'Author.rght'
-        db.add_column(u'blog_author', u'rght',
-                      self.gf('django.db.models.fields.PositiveIntegerField')(default=0, db_index=True),
-                      keep_default=False)
 
-        # Adding field 'Author.tree_id'
-        db.add_column(u'blog_author', u'tree_id',
-                      self.gf('django.db.models.fields.PositiveIntegerField')(default=0, db_index=True),
-                      keep_default=False)
-
-        # Adding field 'Author.lft'
-        db.add_column(u'blog_author', u'lft',
-                      self.gf('django.db.models.fields.PositiveIntegerField')(default=0, db_index=True),
-                      keep_default=False)
-
-        # Adding field 'Author.level'
-        db.add_column(u'blog_author', u'level',
-                      self.gf('django.db.models.fields.PositiveIntegerField')(default=0, db_index=True),
-                      keep_default=False)
-
+        # Changing field 'Article.dataset'
+        db.alter_column(u'blog_article', 'dataset_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['cmsbase.PageDataSet'], null=True))
 
     models = {
         u'blog.article': {
             'Meta': {'ordering': "['-publish_date']", 'object_name': 'Article'},
             'approval_needed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'approve': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'authors': ('mptt.fields.TreeManyToManyField', [], {'to': u"orm['blog.Author']", 'symmetrical': 'False', 'blank': 'True'}),
+            'authors': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['blog.Author']", 'symmetrical': 'False', 'blank': 'True'}),
             'categories': ('mptt.fields.TreeManyToManyField', [], {'to': u"orm['blog.Category']", 'symmetrical': 'False', 'blank': 'True'}),
+            'dataset': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['blog.ArticleDataSet']", 'null': 'True', 'blank': 'True'}),
             'date_created': ('django.db.models.fields.DateTimeField', [], {}),
             'date_updated': ('django.db.models.fields.DateTimeField', [], {}),
+            'display_title': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
             'hide_from_nav': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'home': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -72,23 +48,27 @@ class Migration(SchemaMigration):
             'template': ('django.db.models.fields.CharField', [], {'default': "'cms/page.html'", 'max_length': '250'}),
             u'tree_id': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'})
         },
+        u'blog.articledataset': {
+            'Meta': {'object_name': 'ArticleDataSet'},
+            'config': ('django.db.models.fields.TextField', [], {}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+        },
         u'blog.articletranslation': {
             'Meta': {'unique_together': "(('parent', 'language_code'),)", 'object_name': 'ArticleTranslation'},
             'content': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'language_code': ('django.db.models.fields.CharField', [], {'max_length': '7'}),
-            'meta_description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'meta_title': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             'parent': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'translations'", 'to': u"orm['blog.Article']"}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '100'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         u'blog.author': {
             'Meta': {'ordering': "['order_id']", 'object_name': 'Author'},
-            'first_name': ('django.db.models.fields.TextField', [], {'max_length': '100'}),
+            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'identifier': ('django.db.models.fields.SlugField', [], {'max_length': '100'}),
-            'last_name': ('django.db.models.fields.TextField', [], {'max_length': '100'}),
+            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'order_id': ('django.db.models.fields.IntegerField', [], {}),
             'photo': ('django.db.models.fields.files.ImageField', [], {'max_length': '100'}),
             'published': ('django.db.models.fields.BooleanField', [], {})
