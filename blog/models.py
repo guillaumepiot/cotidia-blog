@@ -3,6 +3,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.utils.timezone import now
 from localeurl.models import reverse
 
 from mptt.models import MPTTModel, TreeForeignKey, TreeManyToManyField
@@ -68,7 +69,16 @@ class ArticleTranslation(BasePageTranslation):
 reversion.register(ArticleTranslation)
 
 class ArticleManager(BasePageManager):
-    pass
+    def get_published_live(self):
+        return self.model.objects.filter(published=True, publish_date__lte=now()).exclude(published_from=None)
+
+    def get_published_translation_live(self, language_code=False):
+        translation_model = self.model.CMSMeta.translation_class
+        if language_code:
+            return translation_model.objects.filter(parent__published=True, parent__publish_date__lte=now(), language_code=language_code).exclude(parent__published_from=None)
+        else:
+            return translation_model.objects.filter(parent__published=True, parent__publish_date__lte=now()).exclude(parent__published_from=None)
+
 
 # Subclass the Page model to create the article model
 
