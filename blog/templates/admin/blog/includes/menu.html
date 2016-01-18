@@ -1,0 +1,12 @@
+{% load i18n %}
+{% if perms.blog.change_article %}
+<div class="menu__section-header">
+    {% trans "Blog" %}
+</div>
+
+<a href="{% url 'blog-admin:article-list' %}" class="[ menu__item ] [ menu-item ]">
+    <span class="menu-item__icon fa fa-file-text"></span>
+    <span class="menu-item__text">{% trans "Articles" %}</span>
+</a>
+
+{% endif %}

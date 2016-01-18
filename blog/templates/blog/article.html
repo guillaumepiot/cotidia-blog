@@ -1,43 +1,29 @@
-{% extends 'blog/article_meta.html' %}{% load i18n blog_tags %}
-{% block navigation %}{% blog_nav %}{% endblock navigation %}
-{% block main %}
-<div class="row-fluid">
-	<div class="span9">
-		
-		<ul class="breadcrumb">
-			<li><a href="{% url 'blog:latest' %}">{% trans "Blog" %}</a> <span class="divider">/</span></li>
-			<li>{{article.translated.title}}</li>
-		</ul>
-		
-		<h1>{{article.translated.title}}</h1>
-		{{article.translated.content|safe}}
-		{% if article.published_from %}
-		<p class="categories">{% trans "Categories" %}: {% for category in article.published_from.categories.all %}<a href="{{category.get_absolute_url}}">{{category.translated.title}}</a>{% if not forloop.last %},{% endif %} {% endfor %}</p>
-		{% else %}
-		<p class="categories">{% trans "Categories" %}: {% for category in article.categories.all %}<a href="{{category.get_absolute_url}}">{{category.translated.title}}</a>{% if not forloop.last %},{% endif %} {% endfor %}</p>
-		{% endif %}
-		
-		{% if article.published_from %}
-		<p class="authors">{% trans "Categories" %}: {% for category in article.published_from.authors.all %}<a href="{{author.get_absolute_url}}">{{author}}</a>{% if not forloop.last %},{% endif %} {% endfor %}</p>
-		{% else %}
-		<p class="authors">{% trans "Categories" %}: {% for category in article.categories.all %}<a href="{{author.get_absolute_url}}">{{author}}</a>{% if not forloop.last %},{% endif %} {% endfor %}</p>
-		{% endif %}
-		
-	</div>
-	<div class="span3">
-		
-		<p>{% trans "Categories" %}</p>
-		{% blog_categories %}
-		
-		<p>{% trans "Archive" %}</p>
-		{% blog_archive %}
+{% extends 'base.html' %}
+{% block meta_data %}
+{% if request.is_preview %}
+<meta name="page-id" content="{{page.translated.id}}">
+<meta name="model" content="blog.ArticleTranslation">
+{% endif %}
+{% endblock meta_data %}
 
-		<p>{% trans "Tags" %}</p>
-		{% tags_for_object article.translated as article_tags %}
-		{% for tag in article_tags %}
-			<a href="{% url 'blog:tag' %}?tag={{tag.name}}">{{tag|capfirst}}</a>{% if not forloop.last %}, {% endif %}
-		{% endfor %}
-		
-	</div>
+{% block title %}
+	{{page.translated.title}}
+{% endblock title %}
+
+{% block main %}
+<div class="[ editable ]"  data-name="content">
+    {% if request.is_preview %}
+        {% if page.translated.regions.content %}
+            {{page.translated.regions.content|safe}}
+        {% else %}
+            <h1>Article title</h1>
+            <p>Duis tincidunt sed justo eget ultricies. Proin lobortis magna tortor, ac malesuada leo congue a. Nam metus nulla, vulputate ut nibh ac, commodo viverra tortor. Fusce nec dolor mi. Nulla ipsum magna, placerat eu suscipit ullamcorper, luctus sit amet dui. Aenean sed elementum arcu, id consectetur nisl.</p>
+
+            <p>Maecenas aliquet orci vel est cursus, ac faucibus lorem finibus. Sed porttitor laoreet nunc vitae dignissim. Nam nec fermentum ante. Sed euismod sagittis tortor, eget sagittis velit pulvinar vitae. Pellentesque justo felis, congue tristique iaculis sed, rhoncus sit amet orci. Interdum et malesuada fames ac ante ipsum primis in faucibus. Morbi ultrices risus vel dolor accumsan, et fermentum libero molestie. Sed eu tellus elementum nunc posuere semper. Vestibulum sem mi, condimentum eget augue quis, efficitur ullamcorper nibh.</p>
+        {% endif %}
+    {% else %}
+        {{page.translated.regions.content|safe}}
+    {% endif %}
 </div>
+<p class="text-strong">{{page.publish_date|date:"F Y"}}</p>
 {% endblock main %}

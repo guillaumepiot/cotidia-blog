@@ -1,15 +1,16 @@
+import datetime
+
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template.context import RequestContext
-from localeurl.models import reverse
+from django.core.urlresolvers import reverse
 from django.conf import settings
 
-from cmsbase.views import page_processor, get_page
-from cmsbase import settings as cms_settings
-from tagging.models import Tag, TaggedItem
+from cms.views.public import page_processor, get_page
+from cms import settings as cms_settings
 
-from blog.models import Article, ArticleTranslation, Category, CategoryTranslation, Author
+from blog.models import Article, ArticleTranslation
 from blog import settings as blog_settings
 from blog.utils import MONTH_NAMES
 
@@ -30,7 +31,10 @@ def blog_processor(model_class=Article, translation_class=ArticleTranslation):
 			if request.user.is_authenticated() and not preview == False:
 				is_preview = True
 
-			filter_args = {'parent__publish_date__year':int(year), 'parent__publish_date__month':int(month), 'parent__publish_date__day':int(day)}
+			date = datetime.datetime(year=int(year), month=int(month), day=int(day))
+			filter_args = {'parent__publish_date__range': (datetime.datetime.combine(date, datetime.time.min),
+                            datetime.datetime.combine(date, datetime.time.max))} 
+
 			# Is it home page or not?
 			page = get_page(request=request, model_class=model_class, translation_class=translation_class, slug=slug, preview=is_preview, filter_args=filter_args)
 
@@ -40,6 +44,9 @@ def blog_processor(model_class=Article, translation_class=ArticleTranslation):
 				raise Http404('This article does not exists')
 
 			else:
+				# The publish date must be in the past to be available
+				if not page.is_published() and is_preview == False:
+					raise Http404('This article is not published yet')
 				# Hard redirect if specified in page attributes
 				if page.redirect_to:
 					return HttpResponseRedirect(page.redirect_to.get_absolute_url())
@@ -69,7 +76,7 @@ def article(request, article, year, month, day, slug):
 	else:
 		template = article.template
 
-	return render_to_response(template, {'article':article,}, context_instance=RequestContext(request))
+	return render_to_response(template, {'page':article,}, context_instance=RequestContext(request))
 
 def latest(request):
 	articles = Article.objects.get_published_live().order_by('-publish_date')

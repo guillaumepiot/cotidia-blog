@@ -12,7 +12,7 @@ Or install in edit mode (best for contributors):
 
  	$ -e git+https://guillaumepiot@bitbucket.org/guillaumepiot/cotidia-blog.git#egg=blog
 
-Install the database using the South migrations:
+Install the database using the migrations:
 
 	$ python manage.py migrate blog
 
@@ -21,7 +21,8 @@ URLs
 
 urlpatterns = patterns('',
     ...
-    url(r'blog/', include('blog.urls', namespace='blog')),
+    url(r'^admin/blog/', include('blog.urls.admin', namespace='blog-admin')),
+    url(r'^blog/', include('blog.urls.public', namespace='blog-public')),
     ...
 )
 

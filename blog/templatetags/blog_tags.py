@@ -1,14 +1,10 @@
 from django import template
 register = template.Library()
 
-from blog.models import Article, Category, ArticleTranslation
+from blog.models import Article, ArticleTranslation
 from blog.utils import Year, Month
 from blog import settings as blog_settings
 
-try:
-    from tagging.models import Tag
-except:
-    Tag = None
 
 @register.inclusion_tag('blog/includes/_nav.html')
 def blog_nav():
@@ -63,13 +59,3 @@ def get_latest_by_author(author, limit = 3, exclude = False):
     else:
         articles = Article.objects.get_published_live().filter(published_from__authors=author).order_by('-publish_date')[:int(limit)]
     return articles
-
-@register.assignment_tag
-def tag_cloud_per_language(language_code):
-    from django.utils.translation import get_language
-    if Tag: 
-        queryset = Article.objects.get_published_translation_live(language_code=get_language())
-        tags = Tag.objects.usage_for_queryset(queryset, counts=True)
-        return tags
-    else:
-        return []
