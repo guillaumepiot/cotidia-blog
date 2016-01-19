@@ -1,21 +1,16 @@
-{% extends 'blog/article_meta.html' %}{% load i18n blog_tags %}
-{% block navigation %}{% blog_nav %}{% endblock navigation %}
+{% extends 'base.html' %}{% load i18n %}
+
+{% block title %}
+	{% trans "Blog" %}
+{% endblock title %}
+
 {% block main %}
-<div class="row-fluid">
-	<div class="span9">
-		{% for article in articles %}
-			<h1><a href="{{article.get_absolute_url}}">{{article.translated.title}}</a></h1>
-			<p class="date">{{article.publish_date}}</p>
-			<p>{{article.translated.content|striptags|truncatewords:"50"}} <a href="{{article.get_absolute_url}}">{% trans "Read more" %}</a> </p>
-		{% endfor %}
-	</div>
-	<div class="span3">
-		<p>{% trans "Categories" %}</p>
-		{% blog_categories %}
-		
-		<p>{% trans "Archive" %}</p>
-		{% blog_archive %}
-	</div>
-	
-</div>
+{% for article in articles %}
+	<h1>
+		<a href="{{article.get_absolute_url}}">
+			{{article.translated.title}}
+		</a>
+	</h1>
+	<p>{{article.publish_date}}</p>
+{% endfor %}
 {% endblock main %}
