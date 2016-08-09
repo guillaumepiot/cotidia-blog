@@ -10,7 +10,7 @@
 {% block content %}
 <div class="[ content__inner ]">
     <p class="breadcrumb">
-        <a href="{% url 'blog-admin:article-list' %}">{% trans "Articles" %}</a>  
+        <a href="{% url 'blog-admin:article-list' %}">{% trans "Articles" %}</a>
         &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
         <a href="{% url 'blog-admin:article-detail' object.id %}">{{object.display_title}}</a>
         &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
@@ -55,12 +55,12 @@
                             {% trans "Approved" %}
                         </span>
                         {% endif %}
-                        
+
                         {% if perms.blog.publish_article %}
                             <a href="{% url 'blog-admin:article-unpublish' object.id %}">
                                 {% trans "Unpublish" %}
                             </a>
-                        
+
                         {% endif %}
                     </p>
                 {% else %}
@@ -78,23 +78,23 @@
                             <p class="alert alert--warning">
                                 <span class="fa fa-info-circle"></span>
                                 {% blocktrans %}
-                                    You must choose a title for the page 
+                                    You must choose a title for the page
                                     before it can be approved.
                                 {% endblocktrans %}
                             </p>
                             {% endif %}
-                        
+
                         {% endif %}
                     </p>
                 {% endif %}
                 <p>
-                    {% trans "The publish date is" %}: 
+                    {% trans "The publish date is" %}:
                     <p class="text-strong">
                     <span class="fa fa-calendar"></span> {{object.publish_date|date:"d F Y"}}
                     <span class="fa fa-clock-o"></span> {{object.publish_date|date:"h:i A"}}
                     </p>
                 </p>
-            </div>  
+            </div>
             <div class="grid__span-7">
                 <div class="content-inner">
                     <table class="table">
@@ -116,8 +116,8 @@
                                 </span>
                             </td>
                             <td class="table-cell">{% blocktrans %}
-                                A version of the article has been added or edited 
-                                and needs an administrator approval to be 
+                                A version of the article has been added or edited
+                                and needs an administrator approval to be
                                 published live.
                             {% endblocktrans %}</td>
                         </tr>
@@ -156,8 +156,8 @@
         <div class="grid">
             <div class="grid__span-6">
                 <p>{% blocktrans %}Once you have created the article, you will need
-                to publish some content inside it. If this website supports 
-                multiple languages, you will be a able to add content for each 
+                to publish some content inside it. If this website supports
+                multiple languages, you will be a able to add content for each
                 language independently.{% endblocktrans %}</p>
 
                 <p>{% blocktrans %}Before you can add content to the page, you
@@ -180,15 +180,15 @@
                 {% for page in object.languages %}
                     <tr class="table-row">
                         <td class="table-cell">
-                            <img src="{% static "img/flags/" %}{{page.language_code}}.png" style="width:16px; position: relative; top:3px;"/> 
+                            <img src="{% static "img/flags/" %}{{page.language_code}}.png" style="width:16px; position: relative; top:3px;"/>
                             {{page.get_language}}
                         </td>
                         <td class="table-cell">
-                            {% if perms.blog.change_page %}
+                            {% if perms.blog.change_article %}
                                 {% if page.parent %}
                                 {% if page.title %}{{page.title}}{% endif %}
-                                <a 
-                                    href="{% url 'blog-admin:article-title-update' object.id page.language_code page.id %}" 
+                                <a
+                                    href="{% url 'blog-admin:article-title-update' object.id page.language_code page.id %}"
                                     class="{% if not page.title %}[ btn btn--small btn--create ]{% endif %}"
                                     >
                                     {% if page.title %}
@@ -197,7 +197,7 @@
                                         {% trans "Add title" %}
                                     {% endif %}
                                 </a>
-                                
+
                                 {% else %}
                                 <a href="{% url 'blog-admin:article-title-add' object.id page.language_code %}" class="btn btn--small btn--create">
                                     {% trans "Choose title" %}
@@ -220,11 +220,11 @@
                         </td>
                         <td class="table-cell">
                             {% if page.parent and page.slug %}
-                            <a 
-                                href="{{object|get_page_url:page.language_code}}?preview" 
+                            <a
+                                href="{{object|get_page_url:page.language_code}}?preview"
                                 class="[ btn btn--small btn--primary ]">
                                 <span class="fa fa-file-text"></span>
-                                {% if perms.blog.change_page %}
+                                {% if perms.blog.change_article %}
                                     {% trans "Preview & Edit" %}
                                 {% else %}
                                     {% trans "Preview" %}
@@ -257,8 +257,8 @@
         </div>
         <div class="content-inner">
             {% if object.dataset %}
-                
-            
+
+
             <table class="table">
                 <thead>
                     <tr class="table-row">
@@ -270,14 +270,14 @@
                 {% for page in object.languages %}
                     <tr class="table-row">
                         <td class="table-cell">
-                            <img src="{% static "img/flags/" %}{{page.language_code}}.png" style="width:16px; position: relative; top:3px;"/> 
+                            <img src="{% static "img/flags/" %}{{page.language_code}}.png" style="width:16px; position: relative; top:3px;"/>
                             {{page.get_language}}
                         </td>
                         <td class="table-cell">
                             {% if page.parent %}
-                                {% if perms.blog.change_page %}
-                                <a 
-                                    href="{% url 'blog-admin:article-metadata-update' page.id page.language_code %}" 
+                                {% if perms.blog.change_article %}
+                                <a
+                                    href="{% url 'blog-admin:article-metadata-update' page.id page.language_code %}"
                                     class="[ btn btn--small btn--primary ]">
                                     <span class="fa fa-file-text"></span>
                                     {% trans "Edit" %}
@@ -314,7 +314,7 @@
             </div>
             <div class="grid__span-8">
                 <p>{{object.display_title}}</p>
-            </div>  
+            </div>
         </div>
         <div class="grid">
             <div class="grid__span-2">
@@ -324,7 +324,7 @@
             </div>
             <div class="grid__span-8">
                 <p>{{object.get_template}}</p>
-            </div>  
+            </div>
         </div>
         <div class="grid">
             <div class="grid__span-2">
@@ -334,7 +334,7 @@
             </div>
             <div class="grid__span-8">
                 <p>{{object.author}}</p>
-            </div>  
+            </div>
         </div>
         <div class="grid">
             <div class="grid__span-2">
@@ -344,25 +344,25 @@
             </div>
             <div class="grid__span-8">
                 <p>{{object.slug}}</p>
-            </div>  
+            </div>
         </div>
     </fieldset>
 </div>
 
 <div class="content__inner">
     {% if perms.blog.delete_article %}
-    <a 
-        href="{% url 'blog-admin:article-delete' object.id %}" 
+    <a
+        href="{% url 'blog-admin:article-delete' object.id %}"
         class="btn btn--delete btn--transparent pull-right">
         {% trans "Delete Article" %}
     </a>
     {% endif %}
     {% if perms.blog.change_article %}
-    <a 
-        href="{% url 'blog-admin:article-update' object.id %}" 
+    <a
+        href="{% url 'blog-admin:article-update' object.id %}"
         class="btn btn--change">
         {% trans "Edit Article Details" %}
     </a>
     {% endif %}
-</div>      
+</div>
 {% endblock content %}
