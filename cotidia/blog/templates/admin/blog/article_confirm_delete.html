@@ -10,9 +10,9 @@
 {% block content %}
 <div class="[ content__inner ]">
 	<p class="breadcrumb">
-		<a href="{% url 'blog-admin:article-list' %}">{% trans "Pages" %}</a>  
+		<a href="{% url 'blog-admin:article-list' %}">{% trans "Pages" %}</a>
 		&nbsp;<span class="fa fa-angle-right"></span>&nbsp;
-		<a href="{% url 'blog-admin:article-detail' page.id %}">{{page.display_title}}</a>
+		<a href="{% url 'blog-admin:article-detail' object.id %}">{{object.display_title}}</a>
 		&nbsp;<span class="fa fa-angle-right"></span>&nbsp;
 		{% trans "Confirm Delete" %}
 	</p>
@@ -34,5 +34,5 @@
 			{% trans "Cancel" %}
 		</a>
 	</form>
-</div>		
+</div>
 {% endblock content %}
