@@ -53,6 +53,11 @@ def get_latest_article():
 
 @register.assignment_tag
 def get_next_article(current_article):
+
+    if current_article.published_from is None:
+        current_article = Article.objects.filter(
+            published_from=current_article).first()
+
     queryset = Article.objects.get_published_live().filter(
         publish_date__gte=current_article.publish_date).exclude(
         id=current_article.id).order_by('publish_date')
@@ -64,9 +69,14 @@ def get_next_article(current_article):
 
 @register.assignment_tag
 def get_previous_article(current_article):
+    if current_article.published_from is None:
+        current_article = Article.objects.filter(
+            published_from=current_article).first()
+
     queryset = Article.objects.get_published_live().filter(
         publish_date__lte=current_article.publish_date).exclude(
         id=current_article.id)
+
     if queryset.count():
         return queryset.latest('publish_date')
     else:
