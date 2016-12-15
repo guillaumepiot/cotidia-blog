@@ -2,14 +2,13 @@ import json
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
-from django.contrib.contenttypes.models import ContentType
 
 from mptt.forms import TreeNodeChoiceField
 
 from form_utils.forms import BetterModelForm
 
+from cotidia.blog.models import Article, ArticleTranslation
 
-from blog.models import Article, ArticleTranslation
 
 FIELD_CLASS_MAP = {
     'charfield': {
@@ -37,17 +36,17 @@ FIELD_CLASS_MAP = {
 class TranslationForm(BetterModelForm):
     required_css_class = 'required'
     error_css_class = 'errorfield'
-    
+
     class Meta:
         model = ArticleTranslation
         exclude = [
-            'parent', 
-            'language_code', 
-            'content', 
-            'title', 
-            'slug', 
-            'regions', 
-            'date_created', 
+            'parent',
+            'language_code',
+            'content',
+            'title',
+            'slug',
+            'regions',
+            'date_created',
             'date_updated',
             'created_by',
             'updated_by',
@@ -84,7 +83,7 @@ class TranslationForm(BetterModelForm):
                 field_required = field['required']
 
                 # Create a new form field
-                
+
                 if field_type in ['pagelinkfield']:
                     self.fields[field_name] = field_class(required=field_required, label=field_label, queryset=FIELD_CLASS_MAP[field_type]['field_choices'], help_text=_('Only published pages can be linked to.'))
                 # elif field_type in ['imagefield']:
@@ -129,7 +128,7 @@ class TranslationForm(BetterModelForm):
                 mask_data = json.loads(self.instance.content)
             except:
                 mask_data = None
-                
+
             if mask_data:
 
                 # Go through each fieldset

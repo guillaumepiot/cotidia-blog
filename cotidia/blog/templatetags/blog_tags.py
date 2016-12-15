@@ -1,9 +1,10 @@
 from django import template
-register = template.Library()
 
-from blog.models import Article, ArticleTranslation
-from blog.utils import Year, Month
-from blog import settings as blog_settings
+from cotidia.blog.models import Article
+from cotidia.blog.utils import Year
+from cotidia.blog import settings as blog_settings
+
+register = template.Library()
 
 
 @register.inclusion_tag('blog/includes/_nav.html')
@@ -11,10 +12,6 @@ def blog_nav():
     articles = Article.objects.get_published_live().order_by('-publish_date')
     return {'articles': articles}
 
-@register.inclusion_tag('blog/includes/_categories.html')
-def blog_categories():
-    categories = Category.objects.filter(published=True)
-    return {'categories': categories}
 
 @register.inclusion_tag('blog/includes/_archive.html', takes_context=True)
 def blog_archive(context, show_empty=blog_settings.ARCHIVE_SHOW_EMPTY, show_articles=blog_settings.ARCHIVE_SHOW_ARTICLES, show_count=blog_settings.ARCHIVE_SHOW_COUNT):
@@ -36,13 +33,14 @@ def blog_archive(context, show_empty=blog_settings.ARCHIVE_SHOW_EMPTY, show_arti
         for i in range(year_range+1):
             year_list.append(Year(latest_year - i))
 
-    return {'archive':year_list, 'request':request, 'show_empty':show_empty, 'show_articles':show_articles, 'show_count':show_count }
+    return {'archive': year_list, 'request': request, 'show_empty': show_empty, 'show_articles': show_articles, 'show_count': show_count }
 
 
 @register.assignment_tag
-def get_latest_articles(limit = 3):
+def get_latest_articles(limit=3):
     articles = Article.objects.get_published_live().order_by('-publish_date')[:int(limit)]
     return articles
+
 
 @register.assignment_tag
 def get_latest_articles_per_language(language, limit=False):
@@ -52,8 +50,9 @@ def get_latest_articles_per_language(language, limit=False):
         articles = articles[:int(limit)]
     return articles
 
+
 @register.assignment_tag
-def get_latest_by_author(author, limit = 3, exclude = False):
+def get_latest_by_author(author, limit=3, exclude=False):
     if exclude:
         articles = Article.objects.get_published_live().filter(published_from__authors=author).exclude(id=exclude.id).order_by('-publish_date')[:int(limit)]
     else:

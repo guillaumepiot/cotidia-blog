@@ -4,10 +4,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from mptt.forms import TreeNodeChoiceField
 
-from blog.models import Article, ArticleTranslation, ArticleDataSet
-from blog.settings import BLOG_TEMPLATES
-from blog.widgets import SelectDateWidget, SelectTimeWidget
-from account.models import User
+from cotidia.blog.models import Article, ArticleTranslation, ArticleDataSet
+from cotidia.blog.settings import BLOG_TEMPLATES
+from cotidia.blog.widgets import SelectDateWidget, SelectTimeWidget
+from cotidia.account.models import User
 
 class ArticleAddForm(forms.ModelForm):
 
@@ -28,13 +28,13 @@ class ArticleAddForm(forms.ModelForm):
         )
 
     date = forms.DateField(
-        label="", 
+        label="",
         widget=SelectDateWidget(required=False, attrs={'class': "form__select"}),
         initial=timezone.now()
         )
 
     time = forms.TimeField(
-        label="", 
+        label="",
         widget=SelectTimeWidget(required=False, attrs={'class': "form__select"}),
         required=False,
         initial=timezone.now()
@@ -66,20 +66,20 @@ class ArticleAddForm(forms.ModelForm):
 
         if home:
             err_message = _("There is already another page set as home.")
-            
+
             # Check if other pages are already home excluded the current
             # edited page
             if self.instance:
                 if self.Meta.model.objects.filter(
-                    published_from=None, 
+                    published_from=None,
                     home=True).exclude(id=self.instance.id):
-                    raise forms.ValidationError(err_message) 
+                    raise forms.ValidationError(err_message)
             # Check if other pages are already home excluded
             else:
                 if self.Meta.model.objects.filter(
                     published_from=None, home=True):
-                    raise forms.ValidationError(err_message) 
-        
+                    raise forms.ValidationError(err_message)
+
         return home
 
     def save(self, commit=True):
@@ -106,7 +106,7 @@ class ArticleAddForm(forms.ModelForm):
 
 class ArticleUpdateForm(ArticleAddForm):
 
-    
+
     slug = forms.CharField(
         label='',
         help_text=_("A unique identifier to allow retrieving a page"),
@@ -122,13 +122,13 @@ class ArticleUpdateForm(ArticleAddForm):
         )
 
     # redirect_to = TreeNodeChoiceField(
-    #     label='', 
-    #     queryset=Article.objects.get_published_originals(), 
-    #     help_text=_('Redirect this page to another page in the system'), 
+    #     label='',
+    #     queryset=Article.objects.get_published_originals(),
+    #     help_text=_('Redirect this page to another page in the system'),
     #     widget=forms.Select(attrs={'class':'form__select'}),
     #     required=False)
 
-    
+
     # redirect_to_url = forms.CharField(
     #     label='',
     #     help_text=_("Enter the full web address."),
@@ -183,18 +183,18 @@ class ArticleURLForm(forms.ModelForm):
                 "Only lowercase letters, numbers and dashes are accepted."))
 
 
-        
+
 
         pages = [page.slug for page in ArticleTranslation.objects.all()]
 
         error_message = _('The unique page identifier must be unique')
 
         if self.instance and slug in pages and slug != self.instance.slug and slug != '':
-            raise forms.ValidationError(error_message) 
-        
+            raise forms.ValidationError(error_message)
+
         elif not self.instance and slug in pages and slug != '':
-            raise forms.ValidationError(error_message) 
-        
+            raise forms.ValidationError(error_message)
+
         else:
             return slug
 

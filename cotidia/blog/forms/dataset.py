@@ -4,7 +4,8 @@ from django import forms
 
 from codemirror import CodeMirrorTextarea
 
-from blog.models import ArticleDataSet
+from cotidia.blog.models import ArticleDataSet
+
 
 class ArticleDataSetAddForm(forms.ModelForm):
     required_css_class = 'required'
@@ -38,16 +39,16 @@ class ArticleDataSetAddForm(forms.ModelForm):
 ]
 """
     name = forms.CharField(
-        label='', 
-        max_length=255, 
+        label='',
+        max_length=255,
         widget=forms.TextInput(attrs={'class':'form__text'})
         )
 
     config = forms.CharField(
         widget=CodeMirrorTextarea(
-            mode="javascript", 
-            theme="cobalt", 
-            config={ 'fixedGutter': True, 'lineNumbers': True }), 
+            mode="javascript",
+            theme="cobalt",
+            config={ 'fixedGutter': True, 'lineNumbers': True }),
         initial=initial)
 
     class Meta:

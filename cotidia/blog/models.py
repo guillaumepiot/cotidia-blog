@@ -4,14 +4,14 @@ from django.utils.timezone import now
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from cms.models import (
+from cotidia.cms.models import (
     BasePage,
     BaseDataSet,
     BasePageTranslation,
     BasePageManager
     )
 
-from blog import settings as blog_settings
+from cotidia.blog import settings as blog_settings
 
 
 ###################

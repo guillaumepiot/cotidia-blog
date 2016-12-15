@@ -7,12 +7,12 @@ from django.template.context import RequestContext
 from django.core.urlresolvers import reverse
 from django.conf import settings
 
-from cms.views.public import page_processor, get_page
-from cms import settings as cms_settings
+from cotidia.cms.views.public import page_processor, get_page
+from cotidia.cms import settings as cms_settings
 
-from blog.models import Article, ArticleTranslation
-from blog import settings as blog_settings
-from blog.utils import MONTH_NAMES
+from cotidia.blog.models import Article, ArticleTranslation
+from cotidia.blog import settings as blog_settings
+from cotidia.blog.utils import MONTH_NAMES
 
 
 # Page decorator
@@ -33,7 +33,7 @@ def blog_processor(model_class=Article, translation_class=ArticleTranslation):
 
 			date = datetime.datetime(year=int(year), month=int(month), day=int(day))
 			filter_args = {'parent__publish_date__range': (datetime.datetime.combine(date, datetime.time.min),
-                            datetime.datetime.combine(date, datetime.time.max))} 
+                            datetime.datetime.combine(date, datetime.time.max))}
 
 			# Is it home page or not?
 			page = get_page(request=request, model_class=model_class, translation_class=translation_class, slug=slug, preview=is_preview, filter_args=filter_args)
@@ -117,4 +117,4 @@ def archive(request, year, month=False):
 	else:
 		articles = Article.objects.get_published_live().filter(publish_date__year=year).order_by('-publish_date')
 
-	return render_to_response('blog/archive.html', {'year':year, 'month':month, 'articles':articles}, context_instance=RequestContext(request)) 
+	return render_to_response('blog/archive.html', {'year':year, 'month':month, 'articles':articles}, context_instance=RequestContext(request))

@@ -6,30 +6,26 @@ from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext  
+from django.template import RequestContext
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseRedirect 
+from django.http import HttpResponseRedirect
 from django.utils.text import slugify
 from django.db import transaction
 from django.conf import settings
 
-from account.settings import ADMIN_LOGIN_URL
-from account.utils import StaffPermissionRequiredMixin
+from cotidia.account.utils import StaffPermissionRequiredMixin
 
-from cms.settings import CMS_LANGUAGES
+from cotidia.cms.settings import CMS_LANGUAGES
 
-from blog.models import Article, ArticleTranslation
-from blog.forms.article import (
+from cotidia.blog.models import Article, ArticleTranslation
+from cotidia.blog.forms.article import (
     ArticleAddForm,
     ArticleUpdateForm,
     ArticleURLForm,
     ArticleTitleForm
     )
-from blog.forms.custom_form import TranslationForm
+from cotidia.blog.forms.custom_form import TranslationForm
 
-########
-# Article #
-########
 
 class ArticleList(StaffPermissionRequiredMixin, ListView):
     model = Article
@@ -39,10 +35,12 @@ class ArticleList(StaffPermissionRequiredMixin, ListView):
     def get_queryset(self):
         return Article.objects.get_originals()
 
+
 class ArticleDetail(StaffPermissionRequiredMixin, DetailView):
     model = Article
     template_name = 'admin/blog/article_detail.html'
     permission_required = 'blog.change_article'
+
 
 class ArticleCreate(StaffPermissionRequiredMixin, CreateView):
     model = Article
@@ -53,6 +51,7 @@ class ArticleCreate(StaffPermissionRequiredMixin, CreateView):
     def get_success_url(self):
         messages.success(self.request, _('The page has been created.'))
         return reverse('blog-admin:article-list')
+
 
 class ArticleUpdate(StaffPermissionRequiredMixin, UpdateView):
     model = Article
@@ -85,11 +84,11 @@ class ArticleDelete(StaffPermissionRequiredMixin, DeleteView):
 @login_required
 @transaction.atomic()
 def add_edit_translation(
-    request, 
-    article_id, 
-    language_code, 
-    model_class=Article, 
-    translation_class=ArticleTranslation, 
+    request,
+    article_id,
+    language_code,
+    model_class=Article,
+    translation_class=ArticleTranslation,
     translation_form_class=TranslationForm):
 
     if not language_code in [lang[0] for lang in CMS_LANGUAGES]:
@@ -167,14 +166,14 @@ def add_edit_translation(
 # Publishing #
 ##############
 
-@permission_required('blog.publish_article', ADMIN_LOGIN_URL)
+@permission_required('blog.publish_article', settings.ADMIN_LOGIN_URL)
 def ArticlePublish(request, article_id):
 
     page = get_object_or_404(Article, id=article_id)
 
     if request.method == 'POST':
         if page.get_translations():
-            
+
             page.approval_needed = False
             page.published = True
             page.save()
@@ -185,20 +184,20 @@ def ArticlePublish(request, article_id):
 
         return HttpResponseRedirect(
             reverse('blog-admin:article-detail', kwargs={'pk': page.id}))
-    
+
     template = 'admin/blog/article_publish_form.html'
 
     return render_to_response(template, {'page':page},
         context_instance=RequestContext(request))
 
-@permission_required('blog.publish_article', ADMIN_LOGIN_URL)
+@permission_required('blog.publish_article', settings.ADMIN_LOGIN_URL)
 def ArticleUnpublish(request, article_id):
 
     page = get_object_or_404(Article, id=article_id)
 
     if request.method == 'POST':
         if page.get_translations():
-            
+
             page.approval_needed = False
             page.published = False
             page.save()
@@ -208,7 +207,7 @@ def ArticleUnpublish(request, article_id):
 
         return HttpResponseRedirect(
             reverse('blog-admin:article-detail', kwargs={'pk': page.id}))
-    
+
     template = 'admin/blog/article_unpublish_form.html'
 
     return render_to_response(template, {'page':page},
@@ -218,7 +217,7 @@ def ArticleUnpublish(request, article_id):
 # Content #
 ###########
 
-@permission_required('blog.add_articletranslation', ADMIN_LOGIN_URL)
+@permission_required('blog.add_articletranslation', settings.ADMIN_LOGIN_URL)
 def ArticleURLCreate(request, article_id, lang):
 
     page = get_object_or_404(Article, id=article_id)
@@ -241,13 +240,13 @@ def ArticleURLCreate(request, article_id, lang):
 
             return HttpResponseRedirect(
                 reverse('blog-admin:article-detail', kwargs={'pk': page.id}))
-    
+
     template = 'admin/blog/article_url_form.html'
 
     return render_to_response(template, {'form':form, 'page':page},
         context_instance=RequestContext(request))
 
-@permission_required('blog.change_articletranslation', ADMIN_LOGIN_URL)
+@permission_required('blog.change_articletranslation', settings.ADMIN_LOGIN_URL)
 def ArticleURLUpdate(request, article_id, lang, trans_id):
 
     page = get_object_or_404(Article, id=article_id)
@@ -271,7 +270,7 @@ def ArticleURLUpdate(request, article_id, lang, trans_id):
 
             return HttpResponseRedirect(
                 reverse('blog-admin:article-detail', kwargs={'pk': page.id}))
-    
+
     template = 'admin/blog/article_url_form.html'
 
     return render_to_response(template, {
@@ -281,7 +280,7 @@ def ArticleURLUpdate(request, article_id, lang, trans_id):
 #
 # Manage the page title for a language
 #
-@permission_required('blog.change_article', ADMIN_LOGIN_URL)
+@permission_required('blog.change_article', settings.ADMIN_LOGIN_URL)
 def ArticleTitleUpdate(request, article_id, lang, trans_id=None):
 
     page = get_object_or_404(Article, id=article_id)
@@ -300,7 +299,7 @@ def ArticleTitleUpdate(request, article_id, lang, trans_id=None):
             form = ArticleTitleForm(data=request.POST)
 
         if form.is_valid():
-            
+
             translation = form.save(commit=False)
             translation.parent = page
             translation.language_code = lang
@@ -316,7 +315,7 @@ def ArticleTitleUpdate(request, article_id, lang, trans_id=None):
 
             return HttpResponseRedirect(
                 reverse('blog-admin:article-detail', kwargs={'pk': page.id}))
-    
+
     template = 'admin/blog/article_title_form.html'
 
     return render_to_response(template, {'form':form, 'page':page},
