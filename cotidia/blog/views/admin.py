@@ -1,11 +1,10 @@
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
@@ -69,6 +68,7 @@ class ArticleUpdate(StaffPermissionRequiredMixin, UpdateView):
             self.object.approval_needed = True
             self.object.save()
         return response
+
 
 class ArticleDelete(StaffPermissionRequiredMixin, DeleteView):
     model = Article
@@ -160,7 +160,7 @@ def add_edit_translation(
         #'model_name':page._meta.model_name,
         #'verbose_name_plural':page._meta.verbose_name_plural
     }
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 ##############
 # Publishing #
@@ -187,8 +187,7 @@ def ArticlePublish(request, article_id):
 
     template = 'admin/blog/article_publish_form.html'
 
-    return render_to_response(template, {'page':page},
-        context_instance=RequestContext(request))
+    return render(request, template, {'page':page})
 
 @permission_required('blog.publish_article', settings.ADMIN_LOGIN_URL)
 def ArticleUnpublish(request, article_id):
@@ -210,8 +209,7 @@ def ArticleUnpublish(request, article_id):
 
     template = 'admin/blog/article_unpublish_form.html'
 
-    return render_to_response(template, {'page':page},
-        context_instance=RequestContext(request))
+    return render(request, template, {'page':page})
 
 ###########
 # Content #
@@ -243,8 +241,7 @@ def ArticleURLCreate(request, article_id, lang):
 
     template = 'admin/blog/article_url_form.html'
 
-    return render_to_response(template, {'form':form, 'page':page},
-        context_instance=RequestContext(request))
+    return render(request, template, {'form':form, 'page':page})
 
 @permission_required('blog.change_articletranslation', settings.ADMIN_LOGIN_URL)
 def ArticleURLUpdate(request, article_id, lang, trans_id):
@@ -273,9 +270,8 @@ def ArticleURLUpdate(request, article_id, lang, trans_id):
 
     template = 'admin/blog/article_url_form.html'
 
-    return render_to_response(template, {
-        'form':form, 'page':page, 'translation':translation},
-        context_instance=RequestContext(request))
+    return render(request, template, {
+        'form':form, 'page':page, 'translation':translation})
 
 #
 # Manage the page title for a language
@@ -318,5 +314,4 @@ def ArticleTitleUpdate(request, article_id, lang, trans_id=None):
 
     template = 'admin/blog/article_title_form.html'
 
-    return render_to_response(template, {'form':form, 'page':page},
-        context_instance=RequestContext(request))
+    return render(request, template, {'form':form, 'page':page})
