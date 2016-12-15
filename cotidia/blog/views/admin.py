@@ -5,14 +5,13 @@ from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render, get_object_or_404
-from django.template import RequestContext
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.utils.text import slugify
 from django.db import transaction
-from django.conf import settings
 
 from cotidia.account.utils import StaffPermissionRequiredMixin
+from cotidia.account.conf import settings
 
 from cotidia.cms.settings import CMS_LANGUAGES
 
@@ -166,7 +165,7 @@ def add_edit_translation(
 # Publishing #
 ##############
 
-@permission_required('blog.publish_article', settings.ADMIN_LOGIN_URL)
+@permission_required('blog.publish_article', settings.ACCOUNT_ADMIN_LOGIN_URL)
 def ArticlePublish(request, article_id):
 
     page = get_object_or_404(Article, id=article_id)
@@ -189,7 +188,7 @@ def ArticlePublish(request, article_id):
 
     return render(request, template, {'page':page})
 
-@permission_required('blog.publish_article', settings.ADMIN_LOGIN_URL)
+@permission_required('blog.publish_article', settings.ACCOUNT_ADMIN_LOGIN_URL)
 def ArticleUnpublish(request, article_id):
 
     page = get_object_or_404(Article, id=article_id)
@@ -215,7 +214,7 @@ def ArticleUnpublish(request, article_id):
 # Content #
 ###########
 
-@permission_required('blog.add_articletranslation', settings.ADMIN_LOGIN_URL)
+@permission_required('blog.add_articletranslation', settings.ACCOUNT_ADMIN_LOGIN_URL)
 def ArticleURLCreate(request, article_id, lang):
 
     page = get_object_or_404(Article, id=article_id)
@@ -243,7 +242,7 @@ def ArticleURLCreate(request, article_id, lang):
 
     return render(request, template, {'form':form, 'page':page})
 
-@permission_required('blog.change_articletranslation', settings.ADMIN_LOGIN_URL)
+@permission_required('blog.change_articletranslation', settings.ACCOUNT_ADMIN_LOGIN_URL)
 def ArticleURLUpdate(request, article_id, lang, trans_id):
 
     page = get_object_or_404(Article, id=article_id)
@@ -276,7 +275,7 @@ def ArticleURLUpdate(request, article_id, lang, trans_id):
 #
 # Manage the page title for a language
 #
-@permission_required('blog.change_article', settings.ADMIN_LOGIN_URL)
+@permission_required('blog.change_article', settings.ACCOUNT_ADMIN_LOGIN_URL)
 def ArticleTitleUpdate(request, article_id, lang, trans_id=None):
 
     page = get_object_or_404(Article, id=article_id)
