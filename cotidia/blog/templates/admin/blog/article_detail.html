@@ -277,7 +277,7 @@
                             {% if page.parent %}
                                 {% if perms.blog.change_article %}
                                 <a
-                                    href="{% url 'blog-admin:article-metadata-update' page.id page.language_code %}"
+                                    href="{% url 'blog-admin:article-metadata-update' page.parent.id page.language_code %}"
                                     class="[ btn btn--small btn--primary ]">
                                     <span class="fa fa-file-text"></span>
                                     {% trans "Edit" %}
