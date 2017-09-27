@@ -1,4 +1,4 @@
-{% extends "admin/account/page.html" %}{% load i18n %}
+{% extends "admin/page.html" %}{% load i18n %}
 {% block title %}
     {% trans "Delete page dataset" %}
 {% endblock title %}
@@ -7,16 +7,16 @@
     <span class="toolbar__title">{% trans "Page datasets" %}</span>
 {% endblock toolbar %}
 
-{% block content %}
+{% block page_content %}
 <div class="[ content__inner ]">
     <p class="breadcrumb">
         <a href="{% url 'blog-admin:articledataset-list' %}">
             {% trans "Page datasets" %}
-        </a>  
+        </a>
         &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
         <a href="{% url 'blog-admin:articledataset-detail' object.id %}">
             {{object}}
-        </a>   
+        </a>
         &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
         {% trans "Confirm Delete" %}
     </p>
@@ -40,5 +40,5 @@
             {% trans "Cancel" %}
         </a>
     </form>
-</div>      
-{% endblock content %}
+</div>
+{% endblock page_content %}

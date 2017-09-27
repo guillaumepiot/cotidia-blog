@@ -1,10 +1,10 @@
-{% extends "admin/account/page.html" %}{% load i18n %}
+{% extends "admin/page.html" %}{% load i18n %}
 {% block title %}
     {% trans "Article dataset details" %}
 {% endblock title %}
 
 {% block toolbar %}
-    <a href="{% url 'blog-admin:articledataset-update' object.id %}" 
+    <a href="{% url 'blog-admin:articledataset-update' object.id %}"
         class="[ toolbar__item ] [ btn btn--change btn--small pull-right ]">
         <span class="fa fa-pencil"></span>
         {% trans "Edit model" %}
@@ -12,10 +12,10 @@
     <span class="toolbar__title">{% trans "Article datasets" %}</span>
 {% endblock toolbar %}
 
-{% block content %}
+{% block page_content %}
 <div class="[ content__inner ]">
     <p class="breadcrumb">
-        <a href="{% url 'blog-admin:articledataset-list' %}">{% trans "Article datasets" %}</a>  
+        <a href="{% url 'blog-admin:articledataset-list' %}">{% trans "Article datasets" %}</a>
         &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
         {% trans "Article dataset details" %}
     </p>
@@ -32,7 +32,7 @@
             </div>
             <div class="grid__span-3">
                 <p>{{object.name}}</p>
-            </div>  
+            </div>
         </div>
         <div class="grid">
             <div class="grid__span-2">
@@ -42,7 +42,7 @@
             </div>
             <div class="grid__span-3">
                 <p>{{object.config}}</p>
-            </div>  
+            </div>
         </div>
     </fieldset>
 </div>
@@ -58,5 +58,5 @@
         {% trans "Edit Article dataset" %}
     </a>
     {% endif %}
-</div>      
-{% endblock content %}
+</div>
+{% endblock page_content %}

@@ -1,4 +1,4 @@
-{% extends "admin/account/page.html" %}{% load i18n %}
+{% extends "admin/page.html" %}{% load i18n %}
 {% block title %}
 	{% if object %}
 		{% trans "Edit Article" %}
@@ -11,10 +11,10 @@
 	<span class="toolbar__title">{% trans "Articles" %}</span>
 {% endblock toolbar %}
 
-{% block content %}
+{% block page_content %}
 <div class="[ content__inner ]">
 	<p class="breadcrumb">
-		<a href="{% url 'blog-admin:article-list' %}">{% trans "Articles" %}</a>  
+		<a href="{% url 'blog-admin:article-list' %}">{% trans "Articles" %}</a>
 		&nbsp;<span class="fa fa-angle-right"></span>&nbsp;
 		{% if object %}
 			{% trans "Edit Article" %}
@@ -46,7 +46,7 @@
 				{% with form.display_title as field %}
 					{% include "admin/includes/text-field.html" %}
 				{% endwith %}
-			</div>		
+			</div>
 		</div>
 	</fieldset>
 </div>
@@ -82,7 +82,7 @@
                 {% with form.date as field %}
                     {% include "admin/includes/text-field.html" %}
                 {% endwith %}
-            </div>  
+            </div>
         </div>
         <div class="grid">
             <div class="grid__span-2">
@@ -158,4 +158,4 @@
 	</button>
 </div>
 </form>
-{% endblock content %}
+{% endblock page_content %}

@@ -1,4 +1,4 @@
-{% extends "admin/account/page.html" %}{% load i18n %}
+{% extends "admin/page.html" %}{% load i18n %}
 {% block title %}
 	{% trans "Unpublish Page" %}
 {% endblock title %}
@@ -7,10 +7,10 @@
 	<span class="toolbar__title">{% trans "Pages" %}</span>
 {% endblock toolbar %}
 
-{% block content %}
+{% block page_content %}
 <div class="[ content__inner ]">
 	<p class="breadcrumb">
-		<a href="{% url 'blog-admin:article-list' %}">{% trans "Pages" %}</a>  
+		<a href="{% url 'blog-admin:article-list' %}">{% trans "Pages" %}</a>
 		&nbsp;<span class="fa fa-angle-right"></span>&nbsp;
 		<a href="{% url 'blog-admin:article-detail' page.id %}">{{page.display_title}}</a>
 		&nbsp;<span class="fa fa-angle-right"></span>&nbsp;
@@ -35,7 +35,7 @@
 		<p>
 			{% trans "This page will not be publicly available." %}
 		</p>
-		
+
 	</fieldset>
 </div>
 
@@ -54,11 +54,11 @@
 	<fieldset>
 		<p>
 			{% blocktrans %}
-			    This page can not be published because it doesn't have any 
+			    This page can not be published because it doesn't have any
 			    content.
 			{% endblocktrans %}
 		</p>
-		
+
 	</fieldset>
 </div>
 <div class="content__inner">
@@ -69,4 +69,4 @@
 {% endif %}
 
 </form>
-{% endblock content %}
+{% endblock page_content %}

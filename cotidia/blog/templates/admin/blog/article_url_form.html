@@ -1,4 +1,4 @@
-{% extends "admin/account/page.html" %}{% load i18n %}
+{% extends "admin/page.html" %}{% load i18n %}
 {% block title %}
 	{% if object %}
 		{% trans "Edit Article URL" %}
@@ -11,10 +11,10 @@
 	<span class="toolbar__title">{% trans "Articles" %}</span>
 {% endblock toolbar %}
 
-{% block content %}
+{% block page_content %}
 <div class="[ content__inner ]">
 	<p class="breadcrumb">
-		<a href="{% url 'blog-admin:article-list' %}">{% trans "Articles" %}</a>  
+		<a href="{% url 'blog-admin:article-list' %}">{% trans "Articles" %}</a>
 		&nbsp;<span class="fa fa-angle-right"></span>&nbsp;
 		<a href="{% url 'blog-admin:article-detail' page.id %}">{{page.display_title}}</a>
 		&nbsp;<span class="fa fa-angle-right"></span>&nbsp;
@@ -40,7 +40,7 @@
 		<legend>{% trans "Article URL" %}</legend>
 		{% if page.parent and not page.parent.get_translations %}
 		<p>{% blocktrans %}
-		    The parent page must have a URL before you can set a URL for 
+		    The parent page must have a URL before you can set a URL for
 		    this page.
 		{% endblocktrans %}</p>
 		<p><a href="{% url 'blog-admin:article-detail' page.parent.id %}">
@@ -60,7 +60,7 @@
 				{% with form.slug as field %}
 					{% include "admin/includes/text-field.html" %}
 				{% endwith %}
-			</div>		
+			</div>
 		</div>
 		{% endif %}
 	</fieldset>
@@ -73,7 +73,7 @@
 </div>
 
 </form>
-{% endblock content %}
+{% endblock page_content %}
 {% block footer_scripts %}
 <script type="text/javascript">
 	function updateSlug(elm){

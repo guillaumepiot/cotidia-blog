@@ -1,4 +1,4 @@
-{% extends "admin/account/page.html" %}{% load i18n staticfiles cms_tags %}
+{% extends "admin/page.html" %}{% load i18n staticfiles cms_tags %}
 {% block title %}
     {% trans "Article details" %}
 {% endblock title %}
@@ -7,7 +7,7 @@
     <span class="toolbar__title">{% trans "Articles" %}</span>
 {% endblock toolbar %}
 
-{% block content %}
+{% block page_content %}
 <div class="[ content__inner ]">
     <p class="breadcrumb">
         <a href="{% url 'blog-admin:article-list' %}">{% trans "Articles" %}</a>
@@ -365,4 +365,4 @@
     </a>
     {% endif %}
 </div>
-{% endblock content %}
+{% endblock page_content %}
