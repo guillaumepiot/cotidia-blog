@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
 
 from cotidia.cms.views.public import get_page
-from cotidia.cms import settings as cms_settings
+from cotidia.cms.conf import settings
 
 from cotidia.blog.models import Article, ArticleTranslation
 from cotidia.blog import settings as blog_settings
@@ -39,7 +39,7 @@ def blog_processor(model_class=Article, translation_class=ArticleTranslation):
                         datetime.datetime.combine(date, datetime.time.min),
                         datetime.datetime.combine(date, datetime.time.max)
                     )
-                }
+            }
 
             # Is it home page or not?
             page = get_page(
@@ -73,7 +73,7 @@ def blog_processor(model_class=Article, translation_class=ArticleTranslation):
                 page_url = page.get_absolute_url()
 
                 if not page_url == request.path and slug \
-                        and not cms_settings.CMS_PREFIX:
+                        and not settings.CMS_PREFIX:
                     return HttpResponseRedirect(page_url)
 
             # Assign is_preview to the request object for cleanliness
@@ -105,7 +105,7 @@ def archive(request, year, month=False):
         articles = Article.objects.get_published_live().filter(
             publish_date__year=year,
             publish_date__month=month).order_by('-publish_date')
-        month = MONTH_NAMES[int(month)-1]
+        month = MONTH_NAMES[int(month) - 1]
     else:
         articles = Article.objects.get_published_live().filter(
             publish_date__year=year).order_by('-publish_date')
@@ -114,4 +114,4 @@ def archive(request, year, month=False):
         request,
         'blog/archive.html',
         {'year': year, 'month': month, 'articles': articles}
-        )
+    )

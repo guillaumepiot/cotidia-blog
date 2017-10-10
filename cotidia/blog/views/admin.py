@@ -13,7 +13,7 @@ from django.db import transaction
 from cotidia.account.utils import StaffPermissionRequiredMixin
 from cotidia.account.conf import settings
 
-from cotidia.cms.settings import CMS_LANGUAGES
+from cotidia.cms.conf import settings
 
 from cotidia.blog.models import Article, ArticleTranslation
 from cotidia.blog.forms.article import (
@@ -21,7 +21,7 @@ from cotidia.blog.forms.article import (
     ArticleUpdateForm,
     ArticleURLForm,
     ArticleTitleForm
-    )
+)
 from cotidia.blog.forms.custom_form import TranslationForm
 
 
@@ -59,7 +59,7 @@ class ArticleUpdate(StaffPermissionRequiredMixin, UpdateView):
 
     def get_success_url(self):
         messages.success(self.request, _('The page details have been updated.'))
-        return reverse('blog-admin:article-detail', kwargs={'pk':self.object.id})
+        return reverse('blog-admin:article-detail', kwargs={'pk': self.object.id})
 
     def post(self, request, *args, **kwargs):
         response = super(ArticleUpdate, self).post(request, *args, **kwargs)
@@ -79,7 +79,6 @@ class ArticleDelete(StaffPermissionRequiredMixin, DeleteView):
         return reverse('blog-admin:article-list')
 
 
-
 @login_required
 @transaction.atomic()
 def add_edit_translation(
@@ -90,7 +89,7 @@ def add_edit_translation(
     translation_class=ArticleTranslation,
     translation_form_class=TranslationForm):
 
-    if not language_code in [lang[0] for lang in CMS_LANGUAGES]:
+    if not language_code in [lang[0] for lang in settings.CMS_LANGUAGES]:
         raise ImproperlyConfigured('The language code "%s" is not included in the project settings.' % language_code)
     if not request.user.has_perm('blog.add_articletranslation'):
         raise PermissionDenied
