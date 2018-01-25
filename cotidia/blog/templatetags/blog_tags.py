@@ -46,12 +46,12 @@ def blog_archive(
         }
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_latest_article():
     return Article.objects.get_published_live().latest('publish_date')
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_next_article(current_article):
 
     if current_article.published_from is None:
@@ -68,7 +68,7 @@ def get_next_article(current_article):
     return None
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_previous_article(current_article):
 
     if current_article.published_from is None:
@@ -86,13 +86,13 @@ def get_previous_article(current_article):
     return None
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_latest_articles(limit=3):
     return Article.objects.get_published_live().order_by(
         '-publish_date')[:int(limit)]
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_latest_articles_per_language(language, limit=False):
     from django.utils.translation import get_language
     articles = Article.objects.get_published_translation_live(
@@ -102,7 +102,7 @@ def get_latest_articles_per_language(language, limit=False):
     return articles
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_latest_by_author(author, limit=3, exclude=False):
 
     queryset = Article.objects.get_published_live().filter(

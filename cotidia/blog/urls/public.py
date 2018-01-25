@@ -4,6 +4,8 @@ from cotidia.blog.feeds import LatestEntriesFeed
 from cotidia.blog import settings as blog_settings
 from cotidia.blog.views import public as views
 
+app_name = 'blog'
+
 urlpatterns = [
     # Default
     url(r'^$', views.latest, name="latest"),

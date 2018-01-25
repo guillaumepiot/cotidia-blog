@@ -3,7 +3,9 @@ from django.conf.urls import url
 from cotidia.blog.views.admin import *
 from cotidia.blog.views.dataset import *
 
-urlpatterns =[
+app_name = 'blog'
+
+urlpatterns = [
     url(r'^$', ArticleList.as_view(), name='article-list'),
     url(r'^article/add/$', ArticleCreate.as_view(), name='article-add'),
     url(r'^article/(?P<pk>[\d]+)/$', ArticleDetail.as_view(), name='article-detail'),

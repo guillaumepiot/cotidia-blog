@@ -1,5 +1,5 @@
 from django.utils.translation import ugettext as _
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.timezone import now
 from cotidia.blog.models import Article
 
@@ -26,9 +26,11 @@ class Year(object):
         self.year = year
 
     def months(self):
-        # We only want to show months in the past, so we'll check against the current date
+        # We only want to show months in the past, so we'll check against the
+        # current date
         current_date = now()
-         # Create a list of Month instances for each month of the year
+
+        # Create a list of Month instances for each month of the year
         month_list = []
         for i in range(12):
             # If previous year, add all months regardless
@@ -46,10 +48,11 @@ class Year(object):
         return Article.objects.get_published_live().filter(publish_date__year=self.year).count()
 
     def get_absolute_url(self):
-        return reverse('blog:archive_year', kwargs={'year':self.year})
+        return reverse('blog:archive_year', kwargs={'year': self.year})
 
     def __unicode__(self):
         return u'%s' % self.year
+
 
 class Month(object):
 
@@ -69,10 +72,10 @@ class Month(object):
         return u'%s' % self.month
 
     def month_name(self):
-        return u'%s' % self.month_names[self.month-1]
+        return u'%s' % self.month_names[self.month - 1]
 
     def get_absolute_url(self):
-        return reverse('blog:archive_month', kwargs={'year':self.year, 'month':self.month_number()})
+        return reverse('blog:archive_month', kwargs={'year': self.year, 'month':self.month_number()})
 
     def __unicode__(self):
         return self.month_name()

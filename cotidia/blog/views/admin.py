@@ -1,7 +1,7 @@
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required, permission_required
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render, get_object_or_404
@@ -12,8 +12,6 @@ from django.db import transaction
 
 from cotidia.account.utils import StaffPermissionRequiredMixin
 from cotidia.account.conf import settings
-
-from cotidia.cms.conf import settings
 
 from cotidia.blog.models import Article, ArticleTranslation
 from cotidia.blog.forms.article import (

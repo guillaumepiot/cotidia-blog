@@ -35,7 +35,7 @@ class ArticleManager(BasePageManager):
     def get_published_live(self):
         return self.model.objects.filter(
             published=True, publish_date__lte=now()
-            ).exclude(published_from=None)
+        ).exclude(published_from=None)
 
     def get_published_translation_live(self, language_code=False):
         translation_model = self.model.CMSMeta.translation_class
@@ -44,51 +44,66 @@ class ArticleManager(BasePageManager):
                 parent__published=True,
                 parent__publish_date__lte=now(),
                 language_code=language_code
-                ).exclude(parent__published_from=None)
+            ).exclude(parent__published_from=None)
         else:
             return translation_model.objects.filter(
                 parent__published=True,
                 parent__publish_date__lte=now()
-                ).exclude(parent__published_from=None)
+            ).exclude(parent__published_from=None)
 
 
 class ArticleTranslation(BasePageTranslation):
-    parent = models.ForeignKey('Article', related_name='translations')
+    parent = models.ForeignKey(
+        'Article',
+        related_name='translations',
+        on_delete=models.CASCADE
+    )
 
     created_by = models.ForeignKey(
         'account.User',
         blank=True,
         null=True,
-        related_name='article_translation_created_by'
-        )
+        related_name='article_translation_created_by',
+        on_delete=models.SET_NULL
+    )
 
     updated_by = models.ForeignKey(
         'account.User',
         blank=True,
         null=True,
-        related_name='article_translation_updated_by'
-        )
+        related_name='article_translation_updated_by',
+        on_delete=models.SET_NULL
+    )
 
 
 class Article(BasePage):
-    dataset = models.ForeignKey('ArticleDataSet', null=True)
+    dataset = models.ForeignKey(
+        'ArticleDataSet',
+        null=True,
+        on_delete=models.SET_NULL
+    )
     publish_date = models.DateTimeField(null=True)
-    # categories = TreeManyToManyField('Category', blank=True)
-    author = models.ForeignKey('account.User', null=True)
+    author = models.ForeignKey(
+        'account.User',
+        null=True,
+        on_delete=models.SET_NULL
+    )
 
     created_by = models.ForeignKey(
         'account.User',
         blank=True,
         null=True,
-        related_name='article_created_by'
-        )
+        related_name='article_created_by',
+        on_delete=models.SET_NULL
+    )
 
     updated_by = models.ForeignKey(
         'account.User',
         blank=True,
         null=True,
-        related_name='articleupdated_by'
-        )
+        related_name='articleupdated_by',
+        on_delete=models.SET_NULL
+    )
 
     objects = ArticleManager()
 
