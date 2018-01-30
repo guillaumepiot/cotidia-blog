@@ -25,7 +25,7 @@ def blog_processor(model_class=Article, translation_class=ArticleTranslation):
             is_preview = False
 
             # Make sure the user has the right to see the preview
-            if request.user.is_authenticated() and preview is not False:
+            if request.user.is_authenticated and preview is not False:
                 is_preview = True
 
             date = datetime.datetime(
