@@ -4,47 +4,52 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
+from betterforms.forms import BetterModelForm
+
 from cotidia.blog.models import Article, ArticleTranslation, ArticleDataSet
 from cotidia.blog.settings import BLOG_TEMPLATES
-from cotidia.admin.widgets import SelectDateWidget, SelectTimeWidget
+from cotidia.admin.widgets import DateInput, TimeInput
 from cotidia.account.models import User
 
 
-class ArticleAddForm(forms.ModelForm):
+class ArticleAddForm(BetterModelForm):
 
     display_title = forms.CharField(
-        label='',
-        help_text=_("The display title is only used to represent the page "
+        help_text=_(
+            "The display title is only used to represent the page "
             "within the CMS. This value should not be used for the title "
-            "displayed on the web page."),
-        widget=forms.TextInput(attrs={'class':'form__text'})
-        )
+            "displayed on the web page."
+        ),
+        widget=forms.TextInput(attrs={'class': 'form__text'})
+    )
 
     template = forms.ChoiceField(
-        label='',
-        help_text=_("The template defines the layout of page, as well as the "
-            "editable areas."),
+        help_text=_(
+            "The template defines the layout of page, as well as the "
+            "editable areas."
+        ),
         choices=BLOG_TEMPLATES,
-        widget=forms.Select(attrs={'class':'form__select'})
-        )
+        widget=forms.Select(attrs={'class': 'form__select'})
+    )
 
     date = forms.DateField(
-        label="",
-        widget=SelectDateWidget(required=False, attrs={'class': "form__select"}),
+        label="Publish date",
+        widget=DateInput,
         initial=timezone.now()
-        )
+    )
 
     time = forms.TimeField(
-        label="",
-        widget=SelectTimeWidget(required=False, attrs={'class': "form__select"}),
+        label="Publish time",
+        widget=TimeInput,
         required=False,
         initial=timezone.now()
-        )
+    )
 
     author = forms.ModelChoiceField(
         queryset=User.objects.filter(is_staff=True),
         widget=forms.Select(attrs={'class': "form__select"}),
-        )
+        empty_label=""
+    )
 
     class Meta:
         model = Article
@@ -54,7 +59,23 @@ class ArticleAddForm(forms.ModelForm):
             'date',
             'time',
             'author',
-            ]
+        ]
+        fieldsets = (
+            ('info', {
+                'fields': (
+                    'display_title',
+                    'template',
+                ),
+                'legend': 'Article information'
+            }),
+            ('options', {
+                'fields': (
+                    ('date', 'time'),
+                    'author'
+                ),
+                'legend': 'Options'
+            }),
+        )
 
     def __init__(self, *args, **kwargs):
         super(ArticleAddForm, self).__init__(*args, **kwargs)
@@ -71,14 +92,11 @@ class ArticleAddForm(forms.ModelForm):
             # Check if other pages are already home excluded the current
             # edited page
             if self.instance:
-                if self.Meta.model.objects.filter(
-                    published_from=None,
-                    home=True).exclude(id=self.instance.id):
+                if self.Meta.model.objects.filter(published_from=None, home=True).exclude(id=self.instance.id):
                     raise forms.ValidationError(err_message)
             # Check if other pages are already home excluded
             else:
-                if self.Meta.model.objects.filter(
-                    published_from=None, home=True):
+                if self.Meta.model.objects.filter(published_from=None, home=True):
                     raise forms.ValidationError(err_message)
 
         return home
@@ -105,37 +123,21 @@ class ArticleAddForm(forms.ModelForm):
 
         return instance
 
+
 class ArticleUpdateForm(ArticleAddForm):
 
-
     slug = forms.CharField(
-        label='',
         help_text=_("A unique identifier to allow retrieving a page"),
-        widget=forms.TextInput(attrs={'class':'form__text'}),
+        widget=forms.TextInput,
         required=False
-        )
+    )
 
     dataset = forms.ModelChoiceField(
-        label="",
         queryset=ArticleDataSet.objects.all(),
-        widget=forms.Select(attrs={'class':'form__select'}),
-        required=False
-        )
-
-    # redirect_to = TreeNodeChoiceField(
-    #     label='',
-    #     queryset=Article.objects.get_published_originals(),
-    #     help_text=_('Redirect this page to another page in the system'),
-    #     widget=forms.Select(attrs={'class':'form__select'}),
-    #     required=False)
-
-
-    # redirect_to_url = forms.CharField(
-    #     label='',
-    #     help_text=_("Enter the full web address."),
-    #     widget=forms.TextInput(attrs={'class':'form__text'}),
-    #     required=False
-    #     )
+        widget=forms.Select,
+        required=False,
+        empty_label=""
+    )
 
     class Meta:
         model = Article
@@ -143,31 +145,54 @@ class ArticleUpdateForm(ArticleAddForm):
             'display_title',
             'template',
             'dataset',
-            # 'redirect_to',
-            # 'redirect_to_url',
             'slug',
             'date',
             'time',
             'author',
-            ]
+        ]
+        fieldsets = (
+            ('info', {
+                'fields': (
+                    'display_title',
+                    'template',
+
+                ),
+                'legend': 'Article information'
+            }),
+            ('dataset', {
+                'fields': (
+                    'dataset',
+                ),
+                'legend': 'Dataset'
+            }),
+            ('options', {
+                'fields': (
+                    ('date', 'time'),
+                    'author',
+                    'slug',
+                ),
+                'legend': 'Options'
+            }),
+        )
+
 
 class ArticleURLForm(forms.ModelForm):
 
     slug = forms.CharField(
-        label='',
-        help_text=_("The URL should only contain lowercase letters, "
-            "numbers and dashes (-)."),
+        help_text=_(
+            "The URL should only contain lowercase letters, "
+            "numbers and dashes (-)."
+        ),
         widget=forms.TextInput(attrs={
-            'class':'form__text',
-            'onKeyUp':'updateSlug(this)'
-            })
-        )
+            'onKeyUp': 'updateSlug(this)'
+        })
+    )
 
     class Meta:
         model = ArticleTranslation
         fields = [
             'slug'
-            ]
+        ]
 
     def clean_slug(self):
 
@@ -183,9 +208,6 @@ class ArticleURLForm(forms.ModelForm):
                 "because it contains unallowed characters. "
                 "Only lowercase letters, numbers and dashes are accepted."))
 
-
-
-
         pages = [page.slug for page in ArticleTranslation.objects.all()]
 
         error_message = _('The unique page identifier must be unique')
@@ -199,16 +221,16 @@ class ArticleURLForm(forms.ModelForm):
         else:
             return slug
 
+
 class ArticleTitleForm(forms.ModelForm):
 
     title = forms.CharField(
-        label='',
         help_text=_("The title will be used for navigation items."),
-        widget=forms.TextInput(attrs={'class':'form__text'})
-        )
+        widget=forms.TextInput(attrs={'autofocus': True})
+    )
 
     class Meta:
         model = ArticleTranslation
         fields = [
             'title'
-            ]
+        ]

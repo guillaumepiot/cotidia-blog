@@ -1,7 +1,14 @@
 from django.conf.urls import url
 
-from cotidia.blog.views.admin import *
-from cotidia.blog.views.dataset import *
+from cotidia.blog.views.admin.article import *
+from cotidia.blog.views.admin.dataset import *
+from cotidia.blog.views.admin.article_title import (
+    ArticleTitleCreate,
+    ArticleTitleUpdate
+)
+from cotidia.blog.views.admin.article_url import (
+    ArticleURLUpdate
+)
 
 app_name = 'blog'
 
@@ -14,15 +21,13 @@ urlpatterns = [
 
     url(r'^article/(?P<article_id>[\d]+)/meta-data/(?P<language_code>[-\w]+)/', add_edit_translation, name='article-metadata-update'),
 
-    url(r'^article/(?P<article_id>[\d]+)/(?P<lang>[-\w]+)/url/add/$',
-        ArticleURLCreate, name='article-url-add'),
-    url(r'^article/(?P<article_id>[\d]+)/(?P<lang>[-\w]+)/url/(?P<trans_id>[\d]+)/update/$',
-        ArticleURLUpdate, name='article-url-update'),
+    url(r'^article/(?P<parent_id>[\d]+)/(?P<lang>[-\w]+)/url/(?P<pk>[\d]+)/update/$',
+        ArticleURLUpdate.as_view(), name='article-url-update'),
 
-    url(r'^article/(?P<article_id>[\d]+)/(?P<lang>[-\w]+)/title/add/$',
-        ArticleTitleUpdate, name='article-title-add'),
-    url(r'^article/(?P<article_id>[\d]+)/(?P<lang>[-\w]+)/title/(?P<trans_id>[\d]+)/update/$',
-        ArticleTitleUpdate, name='article-title-update'),
+    url(r'^article/(?P<parent_id>[\d]+)/(?P<lang>[-\w]+)/title/add/$',
+        ArticleTitleCreate.as_view(), name='article-title-add'),
+    url(r'^article/(?P<parent_id>[\d]+)/(?P<lang>[-\w]+)/title/(?P<pk>[\d]+)/update/$',
+        ArticleTitleUpdate.as_view(), name='article-title-update'),
 
     url(r'^article/(?P<article_id>[\d]+)/publish/$',
         ArticlePublish, name='article-publish'),

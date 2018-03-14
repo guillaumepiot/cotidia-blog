@@ -1,4 +1,4 @@
-{% extends "admin/page.html" %}{% load i18n staticfiles %}
+{% extends "admin/cms/base_form.html" %}{% load i18n staticfiles %}
 {% block title %}
     {% if object %}
         {% trans "Edit Article meta data" %}
@@ -15,16 +15,16 @@
 {% endblock header_scripts %}
 
 {% block toolbar %}
-    <span class="toolbar__title">{% trans "Article meta data" %}</span>
+    <span class="toolbar__breadcrumbs">{% trans "Article meta data" %}</span>
 {% endblock toolbar %}
 
 {% block page_content %}
 <div class="[ content__inner ]">
     <p class="breadcrumb">
-        <a href="{% url 'blog-admin:article-list' %}">{% trans "Articles" %}</a>
+        <a href="{% url 'cms-admin:page-list' %}">{% trans "Articles" %}</a>
         &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
         {% if translation %}
-            <a href="{% url 'blog-admin:article-detail' translation.id %}">{{translation}}</a>
+            <a href="{% url 'cms-admin:page-detail' translation.id %}">{{translation}}</a>
             &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
             {% trans "Edit Article meta data" %}
         {% else %}
@@ -54,7 +54,7 @@
                 </span>
             </div>
             <div class="grid__span-3">
-                {% include "admin/includes/text-field.html" %}
+                {% include "admin/generic/form/form_group.html" %}
             </div>
         </div>
     {% endfor %}
@@ -68,4 +68,4 @@
     </button>
 </div>
 </form>
-{% endblock page_content %}
+{% endblock %}
