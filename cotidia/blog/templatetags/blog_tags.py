@@ -1,3 +1,5 @@
+import re
+
 from django import template
 
 from cotidia.blog.models import Article
@@ -43,7 +45,7 @@ def blog_archive(
         'show_empty': show_empty,
         'show_articles': show_articles,
         'show_count': show_count
-        }
+    }
 
 
 @register.simple_tag
@@ -114,3 +116,16 @@ def get_latest_by_author(author, limit=3, exclude=False):
     else:
         return queryset.order_by(
             '-publish_date')[:int(limit)]
+
+
+@register.simple_tag
+def get_article_feature_image(article):
+    if article.translated().regions:
+        page_data = article.translated().regions
+        page_image = page_data.get('page_image')
+        if page_image:
+            pattern = r'background-image: url\(\'(.*)\'\)'
+            image_url = re.search(pattern, page_image)
+            if image_url:
+                return image_url.group(1)
+    return None
