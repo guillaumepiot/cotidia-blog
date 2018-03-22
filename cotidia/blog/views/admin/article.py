@@ -89,6 +89,10 @@ class ArticleDetail(AdminDetailView):
             "template_name": "admin/blog/article/content.html"
         },
         {
+            "legend": "Meta data",
+            "template_name": "admin/cms/page/metadata.html"
+        },
+        {
             "legend": "Dataset",
             "template_name": "admin/blog/article/dataset.html"
         },
