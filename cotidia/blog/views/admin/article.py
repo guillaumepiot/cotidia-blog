@@ -90,7 +90,7 @@ class ArticleDetail(AdminDetailView):
         },
         {
             "legend": "Meta data",
-            "template_name": "admin/cms/page/metadata.html"
+            "template_name": "admin/blog/article/metadata.html"
         },
         {
             "legend": "Dataset",
