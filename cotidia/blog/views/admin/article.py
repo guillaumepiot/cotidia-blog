@@ -89,10 +89,6 @@ class ArticleDetail(AdminDetailView):
             "template_name": "admin/blog/article/content.html"
         },
         {
-            "legend": "Meta data",
-            "template_name": "admin/blog/article/metadata.html"
-        },
-        {
             "legend": "Dataset",
             "template_name": "admin/blog/article/dataset.html"
         },
@@ -126,6 +122,17 @@ class ArticleDetail(AdminDetailView):
             ]
         }
     ]
+
+    def get_fieldsets(self):
+        fieldsets = self.fieldsets.copy()
+
+        if settings.CMS_ENABLE_META_DATA:
+            fieldsets.insert(1, {
+                "legend": "Meta data",
+                "template_name": "admin/blog/article/metadata.html"
+            })
+
+        return fieldsets
 
 
 class ArticleCreate(AdminCreateView):
