@@ -156,14 +156,8 @@ class ArticleUpdate(AdminUpdateView):
         return reverse('blog-admin:article-detail', kwargs={'pk': self.object.id})
 
 
-class ArticleDelete(StaffPermissionRequiredMixin, DeleteView):
+class ArticleDelete(AdminDeleteView):
     model = Article
-    permission_required = 'blog.delete_article'
-    template_name = 'admin/blog/article_confirm_delete.html'
-
-    def get_success_url(self):
-        messages.success(self.request, _('The page has been deleted.'))
-        return reverse('blog-admin:article-list')
 
 
 @login_required
