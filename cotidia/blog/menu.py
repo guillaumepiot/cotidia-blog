@@ -5,7 +5,7 @@ def admin_menu(context):
     return [
         {
             "text": "Blog",
-            "icon": "file-text",
+            "icon": "rss",
             "url": reverse("blog-admin:article-list"),
             "permissions": [
                 "blog.add_article",
