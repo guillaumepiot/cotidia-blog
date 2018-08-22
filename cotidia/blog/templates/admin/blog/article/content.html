@@ -35,7 +35,7 @@
                             class="{% if not page.title %}[ btn btn--small btn--create ]{% endif %}"
                             >
                             {% if page.title %}
-                                <span class="fa fa-pencil"></span>
+                                <span class="fa fa-pen"></span>
                             {% else %}
                                 {% trans "Add title" %}
                             {% endif %}
@@ -51,7 +51,7 @@
                     {% if page.parent %}
                         {% if page.slug %}/{{page.slug}}/{% endif %}
                         <a href="{% url 'blog-admin:article-url-update' object.id page.language_code page.id %}">
-                            <span class="fa fa-pencil"></span>
+                            <span class="fa fa-pen"></span>
                             {% if not page.slug %}{% trans "Choose URL" %}{% endif %}
                         </a>
                     {% endif %}
@@ -60,12 +60,11 @@
                     {% if page.parent and page.slug %}
                     <a
                         href="{{object|get_page_url:page.language_code}}?preview"
-                        class="[ btn btn--small btn--primary ]">
-                        <span class="fa fa-file-text"></span>
+                        class="[ btn btn--small btn--outline ]">
                         {% if perms.cms.change_page %}
-                            {% trans "Preview & Edit" %}
+                            <span class="fa fa-pen"></span> {% trans "Edit" %}
                         {% else %}
-                            {% trans "Preview" %}
+                            <span class="fa fa-eye"></span> {% trans "Preview" %}
                         {% endif %}
                     </a>
                     {% endif %}
