@@ -6,29 +6,11 @@ from django.dispatch import receiver
 
 from cotidia.cms.models import (
     BasePage,
-    BaseDataSet,
     BasePageTranslation,
     BasePageManager
-    )
+)
 
 from cotidia.blog import settings as blog_settings
-
-
-###################
-# Article dataset #
-###################
-
-
-class ArticleDataSet(BaseDataSet):
-
-    class Meta:
-        verbose_name = _('Article data set')
-        verbose_name_plural = _('Article data sets')
-
-
-#################
-# Article model #
-#################
 
 
 class ArticleManager(BasePageManager):
@@ -77,11 +59,6 @@ class ArticleTranslation(BasePageTranslation):
 
 
 class Article(BasePage):
-    dataset = models.ForeignKey(
-        'ArticleDataSet',
-        null=True,
-        on_delete=models.SET_NULL
-    )
     publish_date = models.DateTimeField(null=True)
     author = models.ForeignKey(
         'account.User',

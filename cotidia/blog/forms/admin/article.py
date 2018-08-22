@@ -6,7 +6,7 @@ from django.utils import timezone
 
 from betterforms.forms import BetterModelForm
 
-from cotidia.blog.models import Article, ArticleTranslation, ArticleDataSet
+from cotidia.blog.models import Article, ArticleTranslation
 from cotidia.blog.settings import BLOG_TEMPLATES
 from cotidia.admin.widgets import DateInput, TimeInput
 from cotidia.account.models import User
@@ -132,19 +132,11 @@ class ArticleUpdateForm(ArticleAddForm):
         required=False
     )
 
-    dataset = forms.ModelChoiceField(
-        queryset=ArticleDataSet.objects.all(),
-        widget=forms.Select,
-        required=False,
-        empty_label=""
-    )
-
     class Meta:
         model = Article
         fields = [
             'display_title',
             'template',
-            'dataset',
             'slug',
             'date',
             'time',
@@ -158,12 +150,6 @@ class ArticleUpdateForm(ArticleAddForm):
 
                 ),
                 'legend': 'Article information'
-            }),
-            ('dataset', {
-                'fields': (
-                    'dataset',
-                ),
-                'legend': 'Dataset'
             }),
             ('options', {
                 'fields': (
@@ -204,9 +190,13 @@ class ArticleURLForm(forms.ModelForm):
         slug_pattern = re.compile("^([a-z0-9\-]+)$")
 
         if not slug_pattern.match(slug):
-            raise forms.ValidationError(_("The URL is not valid "
-                "because it contains unallowed characters. "
-                "Only lowercase letters, numbers and dashes are accepted."))
+            raise forms.ValidationError(
+                _(
+                    "The URL is not valid "
+                    "because it contains unallowed characters. "
+                    "Only lowercase letters, numbers and dashes are accepted."
+                )
+            )
 
         pages = [page.slug for page in ArticleTranslation.objects.all()]
 

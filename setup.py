@@ -13,7 +13,6 @@ setup(
     package_data={
         'cotidia.cms': [
             'templates/admin/blog/*.html',
-            'templates/admin/blog/dataset/*.html',
             'templates/admin/blog/includes/*.html',
             'templates/blog/*.html',
             'templates/blog/includes/*.html',
