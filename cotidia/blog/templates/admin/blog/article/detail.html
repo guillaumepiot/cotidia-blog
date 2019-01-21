@@ -1,19 +1,7 @@
 {% extends "admin/generic/page/detail.html" %}
 {% load i18n admin_list_tags admin_toolbar_tags admin_detail_tags %}
 
-
-{% block page_content %}
-{% include "admin/blog/article/status.html" %}
+{% block messages %}
 {{block.super}}
-{% endblock %}
-
-{% block content_actions %}
-<a href="{% get_admin_url app_label model_name 'update' object %}" class="btn btn--link tooltip tooltip--bottom-center" data-tooltip="Edit">
-    <span class="fa fa-cog"></span>
-</a>
-<a href="{% get_admin_url app_label model_name "delete" object %}" class="btn btn--link tooltip tooltip--bottom-center" data-tooltip="Delete">
-    <span class="fa fa-trash"></span>
-</a>
-{% endblock content_actions %}
-{% block form_actions %}
-{% endblock form_actions %}
+{% include "admin/blog/article/status.html" %}
+{% endblock messages %}
