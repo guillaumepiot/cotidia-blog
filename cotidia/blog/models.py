@@ -79,6 +79,7 @@ class Article(BasePage):
         verbose_name = _("Article")
         verbose_name_plural = _("Articles")
         ordering = ["-publish_date"]
+        permissions = (("publish_article", "Can publish article"),)
 
     class CMSMeta:
 
