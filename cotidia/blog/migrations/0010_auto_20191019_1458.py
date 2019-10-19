@@ -4,26 +4,42 @@ from django.db import migrations, models
 import uuid
 
 
+def generate_uuid(apps, schema_editor):
+    ArticleTranslation = apps.get_model("blog", "ArticleTranslation")
+
+    for item in ArticleTranslation.objects.all():
+        item.uuid = uuid.uuid4()
+        item.save()
+
+
+def dummy(apps, schema_editor):
+    pass
+
+
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('blog', '0009_auto_20190602_1908'),
-    ]
+    dependencies = [("blog", "0009_auto_20190602_1908")]
 
     operations = [
         migrations.RenameField(
-            model_name='articletranslation',
-            old_name='date_created',
-            new_name='created_at',
+            model_name="articletranslation",
+            old_name="date_created",
+            new_name="created_at",
         ),
         migrations.RenameField(
-            model_name='articletranslation',
-            old_name='date_updated',
-            new_name='modified_at',
+            model_name="articletranslation",
+            old_name="date_updated",
+            new_name="modified_at",
         ),
         migrations.AddField(
-            model_name='articletranslation',
-            name='uuid',
+            model_name="articletranslation",
+            name="uuid",
+            field=models.UUIDField(default=uuid.uuid4, editable=False, unique=False),
+        ),
+        migrations.RunPython(generate_uuid, dummy),
+        migrations.AlterField(
+            model_name="articletranslation",
+            name="uuid",
             field=models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
         ),
     ]
